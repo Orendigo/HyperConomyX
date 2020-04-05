@@ -621,9 +621,9 @@ public class BukkitConnector extends JavaPlugin implements MineCraftConnector, L
 	public HSign getSign(HLocation location) {
 		if (location == null) return null;
 		Block b = common.getLocation(location).getBlock();
-		if (b != null && (b.getType().equals(Material.OAK_SIGN) || b.getType().equals(Material.OAK_WALL_SIGN))) {
+		if (b != null && b.getType().toString().contains("SIGN")) {
 			Sign s = (Sign) b.getState();
-			boolean isWallSign = (b.getType().equals(Material.OAK_WALL_SIGN)) ? true:false;
+			boolean isWallSign = (b.getType().toString().contains("WALL")) ? true:false;
 			ArrayList<String> lines = new ArrayList<String>();
 			for (String l:s.getLines()) {
 				lines.add(l);
