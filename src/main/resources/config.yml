@@ -61,6 +61,7 @@ shop:
   require-chest-shops-to-be-in-shop: false
   require-transaction-signs-to-be-in-shop: false
   send-price-change-notifications-for: diamond,diamondblock,
+  enchant-books-only: true
 history:
   days-to-save: 7
 enchantment:

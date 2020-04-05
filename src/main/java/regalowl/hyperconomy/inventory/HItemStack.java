@@ -179,16 +179,19 @@ public class HItemStack {
 	}
 	
 	public boolean canAcceptEnchantment(HEnchantment e) {
-		if (material.equalsIgnoreCase("AIR")) return false;
-		if (material.equalsIgnoreCase("BOOK")) return true;
-		if (material.equalsIgnoreCase("ENCHANTED_BOOK")) return false;
-		if (amount > 1) return false;
-		if (itemMeta != null) {
-			for (HEnchantment en:itemMeta.getEnchantments()) {
-				if (hc.getMC().conflictsWith(e, en)) return false;
+		if(hc.getConf().getBoolean("shop.enchant-books-only")) {
+			return material.equalsIgnoreCase("BOOK") && !hasEnchantments();
+		} else {
+			if (material.equalsIgnoreCase("AIR")) return false;
+			if (material.equalsIgnoreCase("BOOK")) return true;
+			if (material.equalsIgnoreCase("ENCHANTED_BOOK")) return false;
+			if (itemMeta != null) {
+				for (HEnchantment en:itemMeta.getEnchantments()) {
+					if (hc.getMC().conflictsWith(e, en)) return false;
+				}
 			}
+			return canEnchantItem();
 		}
-		return canEnchantItem();
 	}
 	
 	public boolean containsEnchantment(HEnchantment e) {

@@ -9,6 +9,7 @@ import regalowl.hyperconomy.account.HyperPlayer;
 import regalowl.hyperconomy.api.HEconomyProvider;
 import regalowl.hyperconomy.api.MineCraftConnector;
 import regalowl.hyperconomy.api.ServerConnectionType;
+import regalowl.hyperconomy.bukkit.BukkitCommon;
 import regalowl.hyperconomy.command.HyperCommand;
 import regalowl.hyperconomy.display.FrameShopHandler;
 import regalowl.hyperconomy.inventory.HEnchantment;
@@ -108,6 +109,12 @@ public class DefaultConnector implements MineCraftConnector {
 
 	@Override
 	public HEconomyProvider getEconomyProvider() {
+		return null;
+	}
+
+	@Override
+	public BukkitCommon getBukkitCommon() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

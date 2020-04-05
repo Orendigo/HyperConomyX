@@ -1,6 +1,8 @@
 package regalowl.hyperconomy.transaction;
 
 
+import org.bukkit.Material;
+
 import regalowl.hyperconomy.DataManager;
 import regalowl.hyperconomy.HyperConomy;
 import regalowl.hyperconomy.account.HyperAccount;
@@ -491,6 +493,12 @@ public class TransactionProcessor {
 			if (!(heldItem.containsEnchantment(tradeObject.getEnchantment()))) {
 				response.addFailed(L.f(L.get("ITEM_DOESNT_HAVE_ENCHANTMENT"), tradeObject.getDisplayName()), tradeObject);
 				return;
+			}
+			if(hc.getConf().getBoolean("shop.enchant-books-only")) {
+				if (!heldItem.getMaterial().equalsIgnoreCase("BOOK") && !heldItem.getMaterial().equalsIgnoreCase("ENCHANTED_BOOK")) {
+					response.addFailed(L.get("ITEM_CANT_ACCEPT_ENCHANTMENT"), tradeObject);
+					return;
+				}
 			}
 			String mater = heldItem.getMaterial().toString();
 			double price = CommonFunctions.twoDecimals(tradeObject.getSellPrice(EnchantmentClass.fromString(mater), trader));
