@@ -4,10 +4,8 @@ package regalowl.hyperconomy.command;
 
 import java.util.ArrayList;
 
-
-
-
-
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import regalowl.hyperconomy.DataManager;
 import regalowl.hyperconomy.HyperConomy;
@@ -193,10 +191,9 @@ public class Additem extends BaseCommand implements HyperCommand {
 	}
 	
 	private void addAll(HyperPlayer p) {
-		HInventory inventory = p.getInventory();
 		String economy = hp.getEconomy();
-		for (int slot = 0; slot < inventory.getSize(); slot++) {
-			HItemStack stack = inventory.getItem(slot);
+		for (Material mat : Material.values()) {
+			HItemStack stack = hc.getMC().getBukkitCommon().getSerializableItemStack(new ItemStack(mat));
 			TradeObject ho =  super.getEconomy().getTradeObject(stack);
 			if (ho != null) continue;
 			TradeObject hobj = generateNewHyperObject(stack, economy);
