@@ -35,7 +35,7 @@ public class HEnchantment {
     }
 
 
-	public String getEnchantmentName() {
+	public String getEnchantmentKey() {
 		return enchantment;
 	}
 

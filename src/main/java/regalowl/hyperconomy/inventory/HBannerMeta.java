@@ -8,13 +8,11 @@ import regalowl.simpledatalib.CommonFunctions;
 
 public class HBannerMeta extends HItemMeta {
 	
-	private String baseColor;
 	private ArrayList<HPattern> patterns = new ArrayList<HPattern>();
 
-	public HBannerMeta(String displayName, ArrayList<String> lore, ArrayList<HEnchantment> enchantments, ArrayList<HItemFlag> itemFlags, boolean unbreakable, int repairCost, String baseColor, ArrayList<HPattern> patterns) {
+	public HBannerMeta(String displayName, ArrayList<String> lore, ArrayList<HEnchantment> enchantments, ArrayList<HItemFlag> itemFlags, boolean unbreakable, int repairCost, ArrayList<HPattern> patterns) {
 		super(displayName, lore, enchantments, itemFlags, unbreakable, repairCost);
 		this.patterns = patterns;
-		this.baseColor = baseColor;
 	}
 	
 	public HBannerMeta(String serialized) {
@@ -24,7 +22,6 @@ public class HBannerMeta extends HItemMeta {
 		for (String hp:stringPatterns) {
 			patterns.add(new HPattern(hp));
 		}
-		this.baseColor = data.get("baseColor");
     }
 	
 	public HBannerMeta(HBannerMeta meta) {
@@ -32,13 +29,11 @@ public class HBannerMeta extends HItemMeta {
 		for (HPattern hp:meta.patterns) {
 			patterns.add(new HPattern(hp));
 		}
-		this.baseColor = meta.baseColor;
     }
 	
 	@Override
 	public String serialize() {
 		HashMap<String,String> data = super.getMap();
-		data.put("baseColor", baseColor);
 		ArrayList<String> stringPatterns = new ArrayList<String>();
 		for (HPattern hp:patterns) {
 			stringPatterns.add(hp.serialize());
@@ -71,16 +66,11 @@ public class HBannerMeta extends HItemMeta {
 	public ArrayList<HPattern> getPatterns() {
 		return patterns;
 	}
-	
-	public String getBaseColor() {
-		return baseColor;
-	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((baseColor == null) ? 0 : baseColor.hashCode());
 		result = prime * result + ((patterns == null) ? 0 : patterns.hashCode());
 		return result;
 	}
@@ -94,11 +84,6 @@ public class HBannerMeta extends HItemMeta {
 		if (getClass() != obj.getClass())
 			return false;
 		HBannerMeta other = (HBannerMeta) obj;
-		if (baseColor == null) {
-			if (other.baseColor != null)
-				return false;
-		} else if (!baseColor.equals(other.baseColor))
-			return false;
 		if (patterns == null) {
 			if (other.patterns != null)
 				return false;

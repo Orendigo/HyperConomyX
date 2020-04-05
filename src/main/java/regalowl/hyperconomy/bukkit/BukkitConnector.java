@@ -17,6 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.Location;
@@ -25,6 +26,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.type.WallSign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
@@ -43,7 +45,6 @@ import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
-import org.bukkit.Material;
 import regalowl.hyperconomy.HyperConomy;
 import regalowl.hyperconomy.InternalEconomy;
 import regalowl.hyperconomy.account.HyperPlayer;
@@ -61,7 +62,7 @@ import regalowl.hyperconomy.minecraft.HBlock;
 import regalowl.hyperconomy.minecraft.HItem;
 import regalowl.hyperconomy.minecraft.HLocation;
 import regalowl.hyperconomy.minecraft.HSign;
-@SuppressWarnings("deprecation")
+
 public class BukkitConnector extends JavaPlugin implements MineCraftConnector, Listener {
 
 	private HashMap<String, HyperCommand> commands = new HashMap<String, HyperCommand>();
@@ -84,6 +85,7 @@ public class BukkitConnector extends JavaPlugin implements MineCraftConnector, L
 		useExternalEconomy = false;	
 	}
 	
+	@Override
 	public BukkitCommon getBukkitCommon() {
 		return common;
 	}
@@ -100,9 +102,7 @@ public class BukkitConnector extends JavaPlugin implements MineCraftConnector, L
 	}
 	@Override
 	public void onEnable() {
-		this.getLogger().info("[HyperConomy - Lifesupport] Loading native build HyperConomy Lifesupport 1.13+.");
-		this.getLogger().info("[HyperConomy - Lifesupport] Detected API-133P! Loading!");
-
+		this.getLogger().info("[HyperConomy - Lifesupport] Loading native build HyperConomy");
 		hc.enable();
 		this.addItems();
 	}
@@ -113,7 +113,6 @@ public class BukkitConnector extends JavaPlugin implements MineCraftConnector, L
 		his.setMaterial(mat.toString());
 		his.setAmount(1);
 		hc.getAPI().addItemToEconomy(his,hc.getConsoleEconomy(),hc.getMC().getMinecraftItemName(his));
-		}
 	}
 
 	@Override
@@ -320,8 +319,8 @@ public class BukkitConnector extends JavaPlugin implements MineCraftConnector, L
 	
 	@Override
 	public boolean conflictsWith(HEnchantment e1, HEnchantment e2) {
-		Enchantment ench1 = Enchantment.getByName(e1.getEnchantmentName());
-		Enchantment ench2 = Enchantment.getByName(e2.getEnchantmentName());
+		Enchantment ench1 = Enchantment.getByKey(NamespacedKey.minecraft(e1.getEnchantmentKey()));
+		Enchantment ench2 = Enchantment.getByKey(NamespacedKey.minecraft(e2.getEnchantmentKey()));
 		return ench1.conflictsWith(ench2);
 	}
 	
@@ -598,7 +597,7 @@ public class BukkitConnector extends JavaPlugin implements MineCraftConnector, L
 	public boolean canHoldChestShopSign(HLocation l) {
 		Block b = common.getBlock(l);
 		Material m = b.getType();
-		if (m == Material.ICE || m == Material.OAK_LEAVES || m == Material.SAND || m == Material.GRAVEL || m == Material.SIGN || m == Material.SIGN || m == Material.TNT) {
+		if (m == Material.ICE || m == Material.OAK_LEAVES || m == Material.SAND || m == Material.GRAVEL || m == Material.OAK_SIGN || m == Material.OAK_WALL_SIGN || m == Material.TNT) {
 			return false;
 		}
 		return true;
@@ -621,9 +620,9 @@ public class BukkitConnector extends JavaPlugin implements MineCraftConnector, L
 	public HSign getSign(HLocation location) {
 		if (location == null) return null;
 		Block b = common.getLocation(location).getBlock();
-		if (b != null && (b.getType().equals(Material.SIGN) || b.getType().equals(Material.WALL_SIGN))) {
+		if (b != null && (b.getType().equals(Material.OAK_SIGN) || b.getType().equals(Material.OAK_WALL_SIGN))) {
 			Sign s = (Sign) b.getState();
-			boolean isWallSign = (b.getType().equals(Material.WALL_SIGN)) ? true:false;
+			boolean isWallSign = (b.getType().equals(Material.OAK_WALL_SIGN)) ? true:false;
 			ArrayList<String> lines = new ArrayList<String>();
 			for (String l:s.getLines()) {
 				lines.add(l);
@@ -651,8 +650,8 @@ public class BukkitConnector extends JavaPlugin implements MineCraftConnector, L
 	@Override
 	public HBlock getAttachedBlock(HSign sign) {
 		Block b = common.getBlock(sign.getLocation());
-		org.bukkit.material.Sign msign = (org.bukkit.material.Sign) b.getState().getData();
-		BlockFace attachedface = msign.getAttachedFace();
+        WallSign signData = (WallSign) b.getState().getBlockData();
+		BlockFace attachedface = signData.getFacing().getOppositeFace();
 		Block attachedblock = b.getRelative(attachedface);
 		return common.getBlock(attachedblock);
 	}
