@@ -3,6 +3,7 @@ package regalowl.hyperconomy.command;
 import java.util.ArrayList;
 
 import regalowl.hyperconomy.HyperConomy;
+import regalowl.hyperconomy.account.HyperBank;
 import regalowl.hyperconomy.account.HyperPlayer;
 
 public class Hctop extends BaseCommand implements HyperCommand {
@@ -31,9 +32,13 @@ public class Hctop extends BaseCommand implements HyperCommand {
 			
 			ArrayList<String> players = new ArrayList<String>();
 			ArrayList<Double> balances = new ArrayList<Double>();
-			for (HyperPlayer hp:dm.getHyperPlayerManager().getHyperPlayers()) {
+			for (HyperPlayer hp : dm.getHyperPlayerManager().getHyperPlayers()) {
 				players.add(hp.getName());
 				balances.add(hp.getBalance());
+			}
+			for (HyperBank hb : dm.getHyperBankManager().getHyperBanks()) {
+				players.add(hb.getName());
+				balances.add(hb.getBalance());
 			}
 			ArrayList<String> splayers = new ArrayList<String>();
 			ArrayList<Double> sbalances = new ArrayList<Double>();
