@@ -104,15 +104,16 @@ public class BukkitConnector extends JavaPlugin implements MineCraftConnector, L
 	public void onEnable() {
 		this.getLogger().info("[HyperConomy - Lifesupport] Loading native build HyperConomy");
 		hc.enable();
-		this.addItems();
-	}
-
-	public void addItems() {
-		for (Material mat:Material.values()){
-		HItemStack his = hc.getBlankStack();
-		his.setMaterial(mat.toString());
-		his.setAmount(1);
-		hc.getAPI().addItemToEconomy(his,hc.getConsoleEconomy(),hc.getMC().getMinecraftItemName(his));
+		this.getCommand("buy").setTabCompleter(new ObjectTabComplete(hc));
+		this.getCommand("sell").setTabCompleter(new ObjectTabComplete(hc));
+		this.getCommand("value").setTabCompleter(new ObjectTabComplete(hc));
+		this.getCommand("objectsettings").setTabCompleter(new ObjectTabComplete(hc));
+		this.getCommand("hcs").setTabCompleter(new ObjectTabComplete(hc));
+		this.getCommand("os").setTabCompleter(new ObjectTabComplete(hc));
+		this.getCommand("hcb").setTabCompleter(new AccountTabComplete(hc));
+		this.getCommand("hcbalance").setTabCompleter(new AccountTabComplete(hc));
+		this.getCommand("hcp").setTabCompleter(new AccountTabComplete(hc));
+		this.getCommand("hcpay").setTabCompleter(new AccountTabComplete(hc));
 	}
 
 	@Override
