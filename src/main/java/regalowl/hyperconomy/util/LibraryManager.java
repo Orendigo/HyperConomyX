@@ -59,9 +59,9 @@ public class LibraryManager implements HyperEventListener {
 			
 			ArrayList<Dependency> dependencies = new ArrayList<Dependency>();
 
-			dependencies.add(new Dependency(libFolder + File.separator + "sqlite-jdbc-3.7.2.jar", "https://bitbucket.org/xerial/sqlite-jdbc/downloads/sqlite-jdbc-3.20.0.jar", true));
-			dependencies.add(new Dependency(libFolder + File.separator + "mysql-connector-java-5.1.44.jar", "http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.44/mysql-connector-java-5.1.44.jar", true));
-			dependencies.add(new Dependency(libFolder + File.separator + "json-simple-1.1.1.jar", "http://central.maven.org/maven2/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1.jar", true));
+			//dependencies.add(new Dependency(libFolder + File.separator + "sqlite-jdbc-3.20.0.jar", "https://bitbucket.org/xerial/sqlite-jdbc/downloads/sqlite-jdbc-3.20.0.jar", true));
+			//dependencies.add(new Dependency(libFolder + File.separator + "mysql-connector-java-5.1.44.jar", "https://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.44/mysql-connector-java-5.1.44.jar", true));
+			//dependencies.add(new Dependency(libFolder + File.separator + "json-simple-1.1.1.jar", "https://repo1.maven.org/maven2/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1.jar", true));
 			
 			//include in jar so that config can load quicker
 			//dependencies.add(new Dependency(libFolder + File.separator + "snakeyaml-1.15.jar", "https://oss.sonatype.org/content/groups/public/org/yaml/snakeyaml/1.15/snakeyaml-1.15.jar", true));
@@ -73,18 +73,18 @@ public class LibraryManager implements HyperEventListener {
 			
 			
 			
-			dependencies.add(new Dependency(libFolder + File.separator + "javax.servlet-api-3.0.1.jar", "http://central.maven.org/maven2/javax/servlet/javax.servlet-api/3.0.1/javax.servlet-api-3.0.1.jar", false));
-			dependencies.add(new Dependency(libFolder + File.separator + "jetty-servlet-8.1.9.v20130131.jar", "http://central.maven.org/maven2/org/eclipse/jetty/jetty-servlet/8.1.9.v20130131/jetty-servlet-8.1.9.v20130131.jar", false));
-			dependencies.add(new Dependency(libFolder + File.separator + "jetty-continuation-8.1.9.v20130131.jar", "http://central.maven.org/maven2/org/eclipse/jetty/jetty-continuation/8.1.9.v20130131/jetty-continuation-8.1.9.v20130131.jar", false));
-			dependencies.add(new Dependency(libFolder + File.separator + "jetty-http-8.1.9.v20130131.jar", "http://central.maven.org/maven2/org/eclipse/jetty/jetty-http/8.1.9.v20130131/jetty-http-8.1.9.v20130131.jar", false));
-			dependencies.add(new Dependency(libFolder + File.separator + "jetty-io-8.1.9.v20130131.jar", "http://central.maven.org/maven2/org/eclipse/jetty/jetty-io/8.1.9.v20130131/jetty-io-8.1.9.v20130131.jar", false));
-			dependencies.add(new Dependency(libFolder + File.separator + "jetty-server-8.1.9.v20130131.jar", "http://central.maven.org/maven2/org/eclipse/jetty/jetty-server/8.1.9.v20130131/jetty-server-8.1.9.v20130131.jar", false));
-			dependencies.add(new Dependency(libFolder + File.separator + "jetty-util-8.1.9.v20130131.jar", "http://central.maven.org/maven2/org/eclipse/jetty/jetty-util/8.1.9.v20130131/jetty-util-8.1.9.v20130131.jar", false));
-			dependencies.add(new Dependency(libFolder + File.separator + "jetty-security-8.1.9.v20130131.jar", "http://central.maven.org/maven2/org/eclipse/jetty/jetty-security/8.1.9.v20130131/jetty-security-8.1.9.v20130131.jar", false));
-			dependencies.add(new Dependency(libFolder + File.separator + "jetty-jmx-8.1.9.v20130131.jar", "http://central.maven.org/maven2/org/eclipse/jetty/jetty-jmx/8.1.9.v20130131/jetty-jmx-8.1.9.v20130131.jar", false));
+			dependencies.add(new Dependency(libFolder + File.separator + "javax.servlet-api-3.0.1.jar", "https://repo1.maven.org/maven2/javax/servlet/javax.servlet-api/3.0.1/javax.servlet-api-3.0.1.jar", false));
+			dependencies.add(new Dependency(libFolder + File.separator + "jetty-servlet-8.1.9.v20130131.jar", "https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-servlet/8.1.9.v20130131/jetty-servlet-8.1.9.v20130131.jar", false));
+			dependencies.add(new Dependency(libFolder + File.separator + "jetty-continuation-8.1.9.v20130131.jar", "https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-continuation/8.1.9.v20130131/jetty-continuation-8.1.9.v20130131.jar", false));
+			dependencies.add(new Dependency(libFolder + File.separator + "jetty-http-8.1.9.v20130131.jar", "https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-http/8.1.9.v20130131/jetty-http-8.1.9.v20130131.jar", false));
+			dependencies.add(new Dependency(libFolder + File.separator + "jetty-io-8.1.9.v20130131.jar", "https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-io/8.1.9.v20130131/jetty-io-8.1.9.v20130131.jar", false));
+			dependencies.add(new Dependency(libFolder + File.separator + "jetty-server-8.1.9.v20130131.jar", "https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-server/8.1.9.v20130131/jetty-server-8.1.9.v20130131.jar", false));
+			dependencies.add(new Dependency(libFolder + File.separator + "jetty-util-8.1.9.v20130131.jar", "https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-util/8.1.9.v20130131/jetty-util-8.1.9.v20130131.jar", false));
+			dependencies.add(new Dependency(libFolder + File.separator + "jetty-security-8.1.9.v20130131.jar", "https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-security/8.1.9.v20130131/jetty-security-8.1.9.v20130131.jar", false));
+			dependencies.add(new Dependency(libFolder + File.separator + "jetty-jmx-8.1.9.v20130131.jar", "https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-jmx/8.1.9.v20130131/jetty-jmx-8.1.9.v20130131.jar", false));
 			
 			
-			dependencies.add(new Dependency(libFolder + File.separator + "opencsv-2.3.jar", "http://central.maven.org/maven2/net/sf/opencsv/opencsv/2.3/opencsv-2.3.jar", false));
+			dependencies.add(new Dependency(libFolder + File.separator + "opencsv-2.3.jar", "https://repo1.maven.org/maven2/net/sf/opencsv/opencsv/2.3/opencsv-2.3.jar", false));
 
 			//download missing dependencies	
 			for (Dependency d:dependencies) {
@@ -140,7 +140,9 @@ public class LibraryManager implements HyperEventListener {
 					}
 					jar.close();
 				} catch (Exception e) {
+					hc.getMC().logSevere("[HyperConomy]Error while downloading dependency: "+d.getFileName());
 					e.printStackTrace();
+					dependencyError = true;
 				}
 			}
 			

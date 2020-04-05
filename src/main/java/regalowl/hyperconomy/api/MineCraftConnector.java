@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import regalowl.hyperconomy.HyperConomy;
 import regalowl.hyperconomy.account.HyperPlayer;
+import regalowl.hyperconomy.bukkit.BukkitCommon;
 import regalowl.hyperconomy.command.HyperCommand;
 import regalowl.hyperconomy.display.FrameShopHandler;
 import regalowl.hyperconomy.inventory.HEnchantment;
@@ -24,6 +25,7 @@ public interface MineCraftConnector {
 	public void disablePlugin();
 	public String getVersion();
 	public ServerConnectionType getServerConnectionType();
+	public BukkitCommon getBukkitCommon();
 	
 	public void registerCommand(String command, HyperCommand hCommand);
 	

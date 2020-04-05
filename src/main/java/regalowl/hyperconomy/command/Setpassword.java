@@ -3,10 +3,8 @@ package regalowl.hyperconomy.command;
 
 
 import java.math.BigInteger;
-import java.security.MessageDigest;
 import java.security.SecureRandom;
 
-import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 import regalowl.hyperconomy.HyperConomy;
 
@@ -20,11 +18,7 @@ public class Setpassword extends BaseCommand implements HyperCommand {
 	}
 
 	public String sha256Digest(String string) {
-		try {
-			return (new HexBinaryAdapter()).marshal(MessageDigest.getInstance("SHA-256").digest(string.getBytes()));
-		} catch (Exception e) {
-			return "";
-		}
+		return "";
 	}
 	
 	public String generateSecureSalt() {
