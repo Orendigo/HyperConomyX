@@ -312,8 +312,6 @@ public class InfoSign {
 						line3 = "&f" + "S:" + "&a" + L.formatMoney(value);
 					}
 					break;
-				case BALANCE:
-
 				default:
 					break;
 			}
