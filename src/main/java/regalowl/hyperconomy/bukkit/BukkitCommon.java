@@ -40,6 +40,7 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.Repairable;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -67,6 +68,7 @@ import regalowl.hyperconomy.inventory.HPattern;
 import regalowl.hyperconomy.inventory.HPotionData;
 import regalowl.hyperconomy.inventory.HPotionEffect;
 import regalowl.hyperconomy.inventory.HPotionMeta;
+import regalowl.hyperconomy.inventory.HSkullMeta;
 import regalowl.hyperconomy.minecraft.HBlock;
 import regalowl.hyperconomy.minecraft.HItem;
 import regalowl.hyperconomy.minecraft.HLocation;
@@ -484,7 +486,10 @@ public class BukkitCommon {
 	        		}
         		}
         		itemMeta = new HPotionMeta(displayName, lore, enchantments, itemFlags, unbreakable, repairCost, potionEffects, potionData);
-        	} else if (im instanceof MapMeta) {
+			} else if (im instanceof SkullMeta) {
+        		SkullMeta sItemMeta = (SkullMeta)im;
+        		itemMeta = new HSkullMeta(displayName, lore, enchantments, itemFlags, unbreakable, repairCost, sItemMeta.getOwningPlayer().getName());
+			} else if (im instanceof MapMeta) {
         		MapMeta sItemMeta = (MapMeta)im;
         		itemMeta = new HMapMeta(displayName, lore, enchantments, itemFlags, unbreakable, repairCost, sItemMeta.isScaling());
         	} else if (im instanceof BannerMeta) {
@@ -580,7 +585,11 @@ public class BukkitCommon {
         		}
         		HPotionData pd = sItemMeta.getPotionData();
         		pm.setBasePotionData(new PotionData(PotionType.valueOf(pd.getPotionType()), pd.isExtended(), pd.isUpgraded()));
-        	} else if (hItemMeta instanceof HMapMeta) {
+			} else if (hItemMeta instanceof HSkullMeta) {
+        		HSkullMeta sItemMeta = (HSkullMeta)hItemMeta;
+        		SkullMeta sm = (SkullMeta)itemMeta;
+        		sm.setOwningPlayer(Bukkit.getPlayer(sItemMeta.getOwner()));
+			} else if (hItemMeta instanceof HMapMeta) {
         		HMapMeta sItemMeta = (HMapMeta)hItemMeta;
         		MapMeta mm = (MapMeta)itemMeta;
         		mm.setScaling(sItemMeta.isScaling());
