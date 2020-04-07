@@ -236,7 +236,7 @@ public class ChestShopHandler implements HyperEventListener {
 					if (response.successful()) {
 						shopInventory.remove(1, tradeItem);
 						playerInventory.add(1, tradeItem);
-						cs.setViewerMenuTitle(clicker, "Bought for: " + hc.getLanguageFile().gC(false) + CommonFunctions.twoDecimals(pt.getMoney()));
+						cs.setViewerMenuTitle(clicker, "Bought for: " + hc.getLanguageFile().formatMoney(pt.getMoney()));
 						cs.refreshMenu();
 					}
 				} else if (action.equals("MOVE_TO_OTHER_INVENTORY")) {
@@ -271,7 +271,7 @@ public class ChestShopHandler implements HyperEventListener {
 					if (response.successful()) {
 						shopInventory.remove(tradeItem.getAmount(), tradeItem);
 						playerInventory.add(tradeItem.getAmount(), tradeItem);
-						cs.setViewerMenuTitle(clicker, "Bought for: " + hc.getLanguageFile().gC(false) + CommonFunctions.twoDecimals(pt.getMoney()));
+						cs.setViewerMenuTitle(clicker, "Bought for: " + hc.getLanguageFile().formatMoney(pt.getMoney()));
 						cs.refreshMenu();
 					}
 				} else if (action.equals("PLACE_ALL")) {
@@ -341,7 +341,7 @@ public class ChestShopHandler implements HyperEventListener {
 					if (response.successful()) {
 						shopInventory.add(tradeItem.getAmount(), tradeItem);
 						clicker.setItemOnCursor(null);
-						cs.setViewerMenuTitle(clicker, "Sold to chest for: " + hc.getLanguageFile().gC(false) + CommonFunctions.twoDecimals(pt.getMoney()));
+						cs.setViewerMenuTitle(clicker, "Sold to chest for: " + hc.getLanguageFile().formatMoney(pt.getMoney()));
 						cs.refreshMenu();
 					}
 
@@ -413,7 +413,7 @@ public class ChestShopHandler implements HyperEventListener {
 						
 						playerInventory.remove(tradeItem.getAmount(), tradeItem);
 						shopInventory.add(tradeItem.getAmount(), tradeItem);
-						cs.setViewerMenuTitle(clicker, "Sold to chest for: " + hc.getLanguageFile().gC(false) + CommonFunctions.twoDecimals(pt.getMoney()));
+						cs.setViewerMenuTitle(clicker, "Sold to chest for: " + hc.getLanguageFile().formatMoney(pt.getMoney()));
 						cs.refreshMenu();
 					}
 

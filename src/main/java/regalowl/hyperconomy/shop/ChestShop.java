@@ -371,11 +371,11 @@ public class ChestShop {
 			List<String> originalLore = menuStack.getItemMeta().getLore();
 			menuStack.getItemMeta().setLore(new ArrayList<String>());
 			if (isBuyStack(realStack)) {
-				menuStack.getItemMeta().addLore(hc.getMC().applyColor("&9Buy 1 from chest: " + "&a" + hc.getLanguageFile().fC(CommonFunctions.twoDecimals(getBuyPrice(realStack)))));
+				menuStack.getItemMeta().addLore(hc.getMC().applyColor("&9Buy 1 from chest: " + "&a" + hc.getLanguageFile().formatMoney(CommonFunctions.twoDecimals(getBuyPrice(realStack)))));
 				menuStack.getItemMeta().addLore(hc.getMC().applyColor("&e(Any Click)"));
 			}
 			if (isSellStack(realStack)) {
-				menuStack.getItemMeta().addLore(hc.getMC().applyColor("&9Sell 1 to chest: " + "&a" + hc.getLanguageFile().fC(CommonFunctions.twoDecimals(getSellPrice(realStack)))));
+				menuStack.getItemMeta().addLore(hc.getMC().applyColor("&9Sell 1 to chest: " + "&a" + hc.getLanguageFile().formatMoney(CommonFunctions.twoDecimals(getSellPrice(realStack)))));
 				menuStack.getItemMeta().addLore(hc.getMC().applyColor("&e(Drag and Drop)"));
 			}
 			if (originalLore.size() > 0) {
@@ -487,11 +487,11 @@ public class ChestShop {
 					menuStack.getItemMeta().addLore(hc.getMC().applyColor(" "));
 					if (isBuyStack(realStack)) {
 						menuStack.getItemMeta().addLore(hc.getMC().applyColor("&9Buy From Chest Price: "));
-						menuStack.getItemMeta().addLore(hc.getMC().applyColor("&a" + hc.getLanguageFile().fC(CommonFunctions.twoDecimals(getBuyPrice(realStack)))));
+						menuStack.getItemMeta().addLore(hc.getMC().applyColor("&a" + hc.getLanguageFile().formatMoney(CommonFunctions.twoDecimals(getBuyPrice(realStack)))));
 					} 
 					if (isSellStack(realStack)){
 						menuStack.getItemMeta().addLore(hc.getMC().applyColor("&9Sell To Chest Price: "));
-						menuStack.getItemMeta().addLore(hc.getMC().applyColor("&a" + hc.getLanguageFile().fC(CommonFunctions.twoDecimals(getSellPrice(realStack)))));
+						menuStack.getItemMeta().addLore(hc.getMC().applyColor("&a" + hc.getLanguageFile().formatMoney(CommonFunctions.twoDecimals(getSellPrice(realStack)))));
 					}
 				}
 			} 
@@ -534,11 +534,11 @@ public class ChestShop {
 			
 			HItemStack decreaseIncrement = hc.getDataManager().getDefaultEconomy().getTradeObject("red_stained_glass_pane").getItem();
 			decreaseIncrement.getItemMeta().setDisplayName(hc.getMC().applyColor("&eDecrease Price Change Increment"));
-			decreaseIncrement.getItemMeta().addLore(hc.getMC().applyColor("&9Current Increment: " + "&a" + hc.getLanguageFile().fC(getFractionalPriceIncrement())));
+			decreaseIncrement.getItemMeta().addLore(hc.getMC().applyColor("&9Current Increment: " + "&a" + hc.getLanguageFile().formatMoney(getFractionalPriceIncrement())));
 			shopMenuInventory.setItem(32, decreaseIncrement, false);
 			HItemStack increaseIncrement = hc.getDataManager().getDefaultEconomy().getTradeObject("lime_stained_glass_pane").getItem();
 			increaseIncrement.getItemMeta().setDisplayName(hc.getMC().applyColor("&eIncrease Price Change Increment"));
-			increaseIncrement.getItemMeta().addLore(hc.getMC().applyColor("&9Current Increment: " + "&a" + hc.getLanguageFile().fC(getFractionalPriceIncrement())));
+			increaseIncrement.getItemMeta().addLore(hc.getMC().applyColor("&9Current Increment: " + "&a" + hc.getLanguageFile().formatMoney(getFractionalPriceIncrement())));
 			shopMenuInventory.setItem(31, increaseIncrement, false);
 			
 			
@@ -548,22 +548,22 @@ public class ChestShop {
 			decreasePrice.getItemMeta().setDisplayName(hc.getMC().applyColor("&eDecrease Price"));
 			if (isBuyStack(editStack)) {
 				decreasePrice.getItemMeta().addLore(hc.getMC().applyColor("&9Current Buy From Chest Price: "));
-				decreasePrice.getItemMeta().addLore(hc.getMC().applyColor("&a" + hc.getLanguageFile().fC(CommonFunctions.twoDecimals(getBuyPrice(editStack)))));
-			} 
+				decreasePrice.getItemMeta().addLore(hc.getMC().applyColor("&a" + hc.getLanguageFile().formatMoney(getBuyPrice(editStack))));
+			}
 			if (isSellStack(editStack)) {
 				decreasePrice.getItemMeta().addLore(hc.getMC().applyColor("&9Current Sell To Chest Price: "));
-				decreasePrice.getItemMeta().addLore(hc.getMC().applyColor("&a" + hc.getLanguageFile().fC(CommonFunctions.twoDecimals(getSellPrice(editStack)))));
+				decreasePrice.getItemMeta().addLore(hc.getMC().applyColor("&a" + hc.getLanguageFile().formatMoney(getSellPrice(editStack))));
 			}
 			shopMenuInventory.setItem(30, decreasePrice, false);
 			HItemStack increasePrice = hc.getDataManager().getDefaultEconomy().getTradeObject("lime_stained_glass_pane").getItem();
 			increasePrice.getItemMeta().setDisplayName(hc.getMC().applyColor("&eIncrease Price"));
 			if (isBuyStack(editStack)) {
 				increasePrice.getItemMeta().addLore(hc.getMC().applyColor("&9Current Buy From Chest Price: "));
-				increasePrice.getItemMeta().addLore(hc.getMC().applyColor("&a" + hc.getLanguageFile().fC(CommonFunctions.twoDecimals(getBuyPrice(editStack)))));
+				increasePrice.getItemMeta().addLore(hc.getMC().applyColor("&a" + hc.getLanguageFile().formatMoney(getBuyPrice(editStack))));
 			} 
 			if (isSellStack(editStack)) {
 				increasePrice.getItemMeta().addLore(hc.getMC().applyColor("&9Current Sell To Chest Price: "));
-				increasePrice.getItemMeta().addLore(hc.getMC().applyColor("&a" + hc.getLanguageFile().fC(CommonFunctions.twoDecimals(getSellPrice(editStack)))));
+				increasePrice.getItemMeta().addLore(hc.getMC().applyColor("&a" + hc.getLanguageFile().formatMoney(getSellPrice(editStack))));
 			}
 			shopMenuInventory.setItem(29, increasePrice, false);
 			

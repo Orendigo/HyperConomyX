@@ -99,11 +99,11 @@ public class ShopPage extends HttpServlet implements HyperEventListener {
 
 			if (useHistory) {
 				if (initialLoad) {
-					hour = hist.getPercentChange(economy, 1);
-					sixHours = hist.getPercentChange(economy, 6);
-					day = hist.getPercentChange(economy, 24);
-					threeDay = hist.getPercentChange(economy, 72);
-					week = hist.getPercentChange(economy, 168);
+					hour = hist.getPercentChangeAsString(economy, 1);
+					sixHours = hist.getPercentChangeAsString(economy, 6);
+					day = hist.getPercentChangeAsString(economy, 24);
+					threeDay = hist.getPercentChangeAsString(economy, 72);
+					week = hist.getPercentChangeAsString(economy, 168);
 					initialLoad = false;
 				} else {
 					for (TradeObject to:modifiedSinceLastUpdate) {
@@ -194,22 +194,22 @@ public class ShopPage extends HttpServlet implements HyperEventListener {
 					sellPrice -= ho.getSalesTaxEstimate(sellPrice);
 					buyPrice = ho.getBuyPrice(1);
 					buyPrice += ho.getPurchaseTax(buyPrice);
-					buyString = hc.getLanguageFile().fC(CommonFunctions.twoDecimals(buyPrice));
-					sellString = hc.getLanguageFile().fC(CommonFunctions.twoDecimals(sellPrice));
+					buyString = hc.getLanguageFile().formatMoney(buyPrice);
+					sellString = hc.getLanguageFile().formatMoney(sellPrice);
 				} else if (ho.getType() == TradeObjectType.ENCHANTMENT) {
 					sellPrice = ho.getSellPrice(EnchantmentClass.DIAMOND);
 					sellPrice -= ho.getSalesTaxEstimate(sellPrice);
 					buyPrice = ho.getBuyPrice(EnchantmentClass.DIAMOND);
 					buyPrice += ho.getPurchaseTax(buyPrice);
-					buyString = hc.getLanguageFile().fC(CommonFunctions.twoDecimals(buyPrice));
-					sellString = hc.getLanguageFile().fC(CommonFunctions.twoDecimals(sellPrice));
+					buyString = hc.getLanguageFile().formatMoney(buyPrice);
+					sellString = hc.getLanguageFile().formatMoney(sellPrice);
 				} else if (ho.getType() == TradeObjectType.EXPERIENCE) {
 					sellPrice = ho.getSellPrice(1);
 					sellPrice -= ho.getSalesTaxEstimate(sellPrice);
 					buyPrice = ho.getBuyPrice(1);
 					buyPrice += ho.getPurchaseTax(buyPrice);
-					buyString = hc.getLanguageFile().fC(CommonFunctions.twoDecimals(buyPrice));
-					sellString = hc.getLanguageFile().fC(CommonFunctions.twoDecimals(sellPrice));
+					buyString = hc.getLanguageFile().formatMoney(buyPrice);
+					sellString = hc.getLanguageFile().formatMoney(sellPrice);
 				}
 				if (hos != null) {
 					if (hos == TradeObjectStatus.BUY) {

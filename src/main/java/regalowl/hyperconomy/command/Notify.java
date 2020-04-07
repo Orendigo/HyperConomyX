@@ -52,7 +52,7 @@ public class Notify extends BaseCommand implements HyperCommand, HyperEventListe
 					if (pt.getHyperObject() != null) {
 						TradeObject ho = pt.getHyperObject();
 						if (notifyNames.contains(ho.getName())) {
-							String message = L.f(L.get("SQL_NOTIFICATION"), ho.getStock(), ho.getBuyPriceWithTax(1), ho.getDisplayName(), ho.getEconomy());
+							String message = L.f(L.get("SQL_NOTIFICATION"), ho.getStock(), CommonFunctions.twoDecimals(ho.getBuyPriceWithTax(1)), ho.getDisplayName(), ho.getEconomy());
 							sendNotification(message);
 						}
 					}

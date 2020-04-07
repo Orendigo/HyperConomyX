@@ -3,6 +3,8 @@ package regalowl.hyperconomy.util;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -160,54 +162,35 @@ public class LanguageFile {
 	}
 	
 	public String formatMoney(double money) {
-		BigDecimal bd = new BigDecimal(money);
-		BigDecimal rounded = bd.setScale(2, RoundingMode.HALF_DOWN);
-		return fC(rounded.toPlainString());
-	}
-	
-	public String gC(boolean fullName) {
+		String prefix = "";
+		if(money < 0.0)
+			prefix = "-";
+		String formatted = formatDouble(Math.abs(money));
 		String currency = get("CURRENCY");
 		if (currency == null) {currency = "$";}
-		if (!fullName && currency.length() > 1) {
-			currency = currency.trim();
-			currency = currency.substring(0, 1);
-		}
-		return currency;
-	}
-	
-	public String fC(String amount) {
-		String formatted = gC(true) + amount;
 		if (hc.getConf().getBoolean("shop.show-currency-symbol-after-price")) {
-			formatted = amount + gC(true);
+			return prefix + formatted + currency;
+		} else {
+			return prefix + currency + formatted;
 		}
-		return formatted;
-	}
-	public String fC(double amount) {
-		String formatted = gC(true) + amount;
-		if (hc.getConf().getBoolean("shop.show-currency-symbol-after-price")) {
-			formatted = amount + gC(true);
-		}
-		return formatted;
-	}
-	public String fCS(double amount) {
-		String formatted = gC(false) + amount;
-		if (hc.getConf().getBoolean("shop.show-currency-symbol-after-price")) {
-			formatted = amount + gC(false);
-		}
-		return formatted;
-	}
-	public String fCS(String amount) {
-		String formatted = gC(false) + amount;
-		if (hc.getConf().getBoolean("shop.show-currency-symbol-after-price")) {
-			formatted = amount + gC(false);
-		}
-		return formatted;
 	}
 
+	public String formatDouble(double value) {
+		BigDecimal bd = new BigDecimal(value);
+		BigDecimal rounded = bd.setScale(2, RoundingMode.HALF_DOWN);
+		DecimalFormat formatter = new DecimalFormat("#,##0.00");
+		return formatter.format(rounded);
+	}
+
+	public String formatInt(int value) {
+		NumberFormat formatter = NumberFormat.getInstance();
+		formatter.setGroupingUsed(true);
+		return formatter.format(value);
+	}
 	
 	public String f(String inputstring, int value, int value2) {
-		inputstring = inputstring.replace("%v",value+"");
-		inputstring = inputstring.replace("%w",value2+"");
+		inputstring = inputstring.replace("%v",formatInt(value)+"");
+		inputstring = inputstring.replace("%w",formatInt(value2)+"");
 		inputstring = inputstring.replace("%c",get("CURRENCY"));
 		return inputstring;
 	}
@@ -223,34 +206,34 @@ public class LanguageFile {
 	public String f(String inputstring, String name, String extra, int i) {
 		inputstring = inputstring.replace("%e",extra);
 		inputstring = inputstring.replace("%n",name);
-		inputstring = inputstring.replace("%i",i+"");
+		inputstring = inputstring.replace("%i",formatInt(i)+"");
 		inputstring = inputstring.replace("%c",get("CURRENCY"));
 		return inputstring;
 	}
 	
 	public String f(String inputstring, double amount, double price, String name, String extra) {
-		inputstring = inputstring.replace("%a",amount+"");
+		inputstring = inputstring.replace("%a",formatDouble(amount)+"");
 		inputstring = inputstring.replace("%e",extra+"");
 		inputstring = inputstring.replace("%zc",extra);
 		inputstring = inputstring.replace("%n",name);
-		inputstring = inputstring.replace("%p",price+"");
+		inputstring = inputstring.replace("%p",formatDouble(price)+"");
 		inputstring = inputstring.replace("%c",get("CURRENCY"));
 		return inputstring;
 	}
 	
 	public String f(String inputstring, double amount, double price, String name, double tax) {
-		inputstring = inputstring.replace("%a",amount+"");
-		inputstring = inputstring.replace("%t",tax+"");
+		inputstring = inputstring.replace("%a",formatDouble(amount)+"");
+		inputstring = inputstring.replace("%t",formatDouble(tax)+"");
 		inputstring = inputstring.replace("%n",name);
-		inputstring = inputstring.replace("%p",price+"");
+		inputstring = inputstring.replace("%p",formatDouble(price)+"");
 		inputstring = inputstring.replace("%c",get("CURRENCY"));
 		return inputstring;
 	}
 	
 	public String f(String inputstring, double amount, double price, String name) {
-		inputstring = inputstring.replace("%a",amount+"");
+		inputstring = inputstring.replace("%a",formatDouble(amount)+"");
 		inputstring = inputstring.replace("%n",name);
-		inputstring = inputstring.replace("%p",price+"");
+		inputstring = inputstring.replace("%p",formatDouble(price)+"");
 		inputstring = inputstring.replace("%c",get("CURRENCY"));
 		return inputstring;
 	}
@@ -262,29 +245,29 @@ public class LanguageFile {
 	}
 	
 	public String f(String inputstring, double value) {
-		inputstring = inputstring.replace("%v",value+"");
+		inputstring = inputstring.replace("%v",formatDouble(value)+"");
 		inputstring = inputstring.replace("%c",get("CURRENCY"));
 		return inputstring;
 	}
 	
 	public String f(String inputstring, int value) {
-		inputstring = inputstring.replace("%v",value+"");
+		inputstring = inputstring.replace("%v",formatInt(value)+"");
 		inputstring = inputstring.replace("%c",get("CURRENCY"));
 		return inputstring;
 	}
 	
 	public String f(String inputstring, int amount, String name) {
-		inputstring = inputstring.replace("%a",amount+"");
+		inputstring = inputstring.replace("%a",formatInt(amount)+"");
 		inputstring = inputstring.replace("%n",name);
 		inputstring = inputstring.replace("%c",get("CURRENCY"));
 		return inputstring;
 	}
 	
 	public String f(String inputstring, double amount, String name) {
-		inputstring = inputstring.replace("%a",amount+"");
+		inputstring = inputstring.replace("%a",formatDouble(amount)+"");
 		inputstring = inputstring.replace("%n",name);
 		inputstring = inputstring.replace("%zc",name);
-		inputstring = inputstring.replace("%p",amount+"");
+		inputstring = inputstring.replace("%p",formatDouble(amount)+"");
 		inputstring = inputstring.replace("%c",get("CURRENCY"));
 		return inputstring;
 	}
@@ -292,7 +275,7 @@ public class LanguageFile {
 	
 	public String f(String inputstring, double value, boolean status) {
 		inputstring = inputstring.replace("%s",status+"");
-		inputstring = inputstring.replace("%v",value+"");
+		inputstring = inputstring.replace("%v",formatDouble(value)+"");
 		inputstring = inputstring.replace("%c",get("CURRENCY"));
 		return inputstring;
 	}

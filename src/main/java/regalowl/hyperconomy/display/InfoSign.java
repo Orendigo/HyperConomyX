@@ -186,15 +186,15 @@ public class InfoSign {
 						double cost = to.getBuyPrice(enchantClass);
 						cost = CommonFunctions.twoDecimals((cost + to.getPurchaseTax(cost)) * multiplier);
 						line3 = "&f" + "Buy:";
-						line4 = "&a" + L.fCS(cost);
+						line4 = "&a" + L.formatMoney(cost);
 					} else if (to.getType() == TradeObjectType.ITEM) {
 						double pcost = to.getBuyPrice(1);
 						line3 = "&f" + "Buy:";
-						line4 = "&a" + L.fCS(CommonFunctions.twoDecimals((pcost + to.getPurchaseTax(pcost)) * multiplier));
+						line4 = "&a" + L.formatMoney(CommonFunctions.twoDecimals((pcost + to.getPurchaseTax(pcost)) * multiplier));
 					} else {
 						double pcost = to.getBuyPrice(1);
 						line3 = "&f" + "Buy:";
-						line4 = "&a" + L.fCS(CommonFunctions.twoDecimals((pcost + to.getPurchaseTax(pcost)) * multiplier));
+						line4 = "&a" + L.formatMoney(CommonFunctions.twoDecimals((pcost + to.getPurchaseTax(pcost)) * multiplier));
 					}
 					break;
 				case SELL:
@@ -202,26 +202,26 @@ public class InfoSign {
 						double value = to.getSellPrice(enchantClass);
 						value = CommonFunctions.twoDecimals((value - to.getSalesTaxEstimate(value)) * multiplier);
 						line3 = "&f" + "Sell:";
-						line4 = "&a" + L.fCS(value);
+						line4 = "&a" + L.formatMoney(value);
 					} else if (to.getType() == TradeObjectType.ITEM) {
 						double value = to.getSellPrice(1);
 						value = CommonFunctions.twoDecimals((value - to.getSalesTaxEstimate(value)) * multiplier);
 						line3 = "&f" + "Sell:";
-						line4 = "&a" + L.fCS(value);
+						line4 = "&a" + L.formatMoney(value);
 					} else {
 						double value = to.getSellPrice(1);
 						value = CommonFunctions.twoDecimals((value - to.getSalesTaxEstimate(value)) * multiplier);
 						line3 = "&f" + "Sell:";
-						line4 = "&a" + L.fCS(value);
+						line4 = "&a" + L.formatMoney(value);
 					}
 					break;
 				case STOCK:
 					line3 = "&f" + "Stock:";
-					line4 = "&a" + "" + CommonFunctions.twoDecimals(to.getStock());
+					line4 = "&a" + "" + L.formatDouble(to.getStock());
 					break;
 				case TOTALSTOCK:
 					line3 = "&f" + "Total Stock:";
-					line4 = "&a" + "" + CommonFunctions.twoDecimals(to.getTotalStock());
+					line4 = "&a" + "" + L.formatDouble(to.getTotalStock());
 					break;
 				case VALUE:
 					line3 = "&f" + "Value:";
@@ -245,15 +245,15 @@ public class InfoSign {
 					break;
 				case STATICPRICE:
 					line3 = "&f" + "Static Price:";
-					line4 = "&a" + "" + to.getStaticPrice() * multiplier;
+					line4 = "&a" + "" + L.formatMoney(to.getStaticPrice() * multiplier);
 					break;
 				case STARTPRICE:
 					line3 = "&f" + "Start Price:";
-					line4 = "&a" + "" + to.getStartPrice() * multiplier;
+					line4 = "&a" + "" + L.formatMoney(to.getStartPrice() * multiplier);
 					break;
 				case MEDIAN:
 					line3 = "&f" + "Median:";
-					line4 = "&a" + "" + to.getMedian();
+					line4 = "&a" + "" + L.formatDouble(to.getMedian());
 					break;
 				case HISTORY:
 					String timeIncrement = hc.getMC().removeColor(line4);
@@ -280,38 +280,40 @@ public class InfoSign {
 						double price = to.getBuyPrice(enchantClass);
 						double taxpaid = CommonFunctions.twoDecimals(to.getPurchaseTax(price) * multiplier);
 						line3 = "&f" + "Tax:";
-						line4 = "&a" + "" + L.fCS(taxpaid);
+						line4 = "&a" + "" + L.formatMoney(taxpaid);
 					} else if (to.getType() == TradeObjectType.ITEM) {
 						line3 = "&f" + "Tax:";
-						line4 = "&a" + L.fCS(CommonFunctions.twoDecimals(to.getPurchaseTax(to.getBuyPrice(1) * multiplier)));
+						line4 = "&a" + L.formatMoney(CommonFunctions.twoDecimals(to.getPurchaseTax(to.getBuyPrice(1) * multiplier)));
 					} else {
 						BasicTradeObject bo = (BasicTradeObject)to;
 						line3 = "&f" + "Tax:";
-						line4 = "&a" + L.fCS(CommonFunctions.twoDecimals(bo.getPurchaseTax(bo.getBuyPrice(1) * multiplier)));
+						line4 = "&a" + L.formatMoney(CommonFunctions.twoDecimals(bo.getPurchaseTax(bo.getBuyPrice(1) * multiplier)));
 					}
 					break;
 				case SB:
 					if (to.getType() == TradeObjectType.ENCHANTMENT) {
 						double cost = to.getBuyPrice(enchantClass);
 						cost = CommonFunctions.twoDecimals((cost + to.getPurchaseTax(cost)) * multiplier);
-						line4 = "&f" + "B:" + "&a" + L.fCS(cost);
+						line4 = "&f" + "B:" + "&a" + L.formatMoney(cost);
 						double value = to.getSellPrice(enchantClass);
 						value = CommonFunctions.twoDecimals((value - to.getSalesTaxEstimate(value)) * multiplier);
-						line3 = "&f" + "S:" + "&a" + L.fCS(value);
+						line3 = "&f" + "S:" + "&a" + L.formatMoney(value);
 					} else if (to.getType() == TradeObjectType.ITEM) {
 						double pcost = to.getBuyPrice(1);
-						line4 = "&f" + "B:" + "&a" + L.fCS(CommonFunctions.twoDecimals((pcost + to.getPurchaseTax(pcost)) * multiplier));
+						line4 = "&f" + "B:" + "&a" + L.formatMoney(CommonFunctions.twoDecimals((pcost + to.getPurchaseTax(pcost)) * multiplier));
 						double value = to.getSellPrice(1);
 						value = CommonFunctions.twoDecimals((value - to.getSalesTaxEstimate(value)) * multiplier);
-						line3 = "&f" + "S:" + "&a" + L.fCS(value);
+						line3 = "&f" + "S:" + "&a" + L.formatMoney(value);
 					} else {
 						double pcost = to.getBuyPrice(1);
-						line4 = "&f" + "B:" + "&a" + L.fCS(CommonFunctions.twoDecimals((pcost + to.getPurchaseTax(pcost)) * multiplier));
+						line4 = "&f" + "B:" + "&a" + L.formatMoney(CommonFunctions.twoDecimals((pcost + to.getPurchaseTax(pcost)) * multiplier));
 						double value = to.getSellPrice(1);
 						value = CommonFunctions.twoDecimals((value - to.getSalesTaxEstimate(value)) * multiplier);
-						line3 = "&f" + "S:" + "&a" + L.fCS(value);
+						line3 = "&f" + "S:" + "&a" + L.formatMoney(value);
 					}
 					break;
+				case BALANCE:
+
 				default:
 					break;
 			}

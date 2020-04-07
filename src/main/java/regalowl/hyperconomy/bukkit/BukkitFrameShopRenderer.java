@@ -74,7 +74,7 @@ public class BukkitFrameShopRenderer extends MapRenderer {
 			} else {
 				value = ho.getSellPrice(1);
 			}
-			String sell = color("Sell: ", MapPalette.DARK_GRAY) + color(L.fCS(CommonFunctions.twoDecimals((value - ho.getSalesTaxEstimate(value)))), MapPalette.DARK_GREEN);
+			String sell = color("Sell: ", MapPalette.DARK_GRAY) + color(L.formatMoney(value - ho.getSalesTaxEstimate(value)), MapPalette.DARK_GREEN);
 			canvas.drawText(8, fHeight + 10, MinecraftFont.Font, sell);
 			
 			
@@ -87,7 +87,7 @@ public class BukkitFrameShopRenderer extends MapRenderer {
 			} else {
 				cost = ho.getBuyPrice(1);
 			}
-			String buy = color("Buy: ", MapPalette.DARK_GRAY) + color(L.fCS(CommonFunctions.twoDecimals((cost + ho.getPurchaseTax(cost)))), MapPalette.DARK_GREEN);
+			String buy = color("Buy: ", MapPalette.DARK_GRAY) + color(L.formatMoney(cost + ho.getPurchaseTax(cost)), MapPalette.DARK_GREEN);
 			canvas.drawText(8, fHeight + 20, MinecraftFont.Font, buy);
 			
 			

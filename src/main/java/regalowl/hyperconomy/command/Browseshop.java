@@ -168,9 +168,9 @@ public class Browseshop extends BaseCommand implements HyperCommand {
 							stock = CommonFunctions.twoDecimals(he.getTradeObject(iname, hsm.getShop(hp)).getStock());
 						}
 			            if (ho.isShopObject()) {
-			            	data.addResponse("&b" + iname + " &9[&a" + stock + " &9" + L.get("AVAILABLE") + "; &a" + L.fC(cost) + " &9" + L.get("EACH") + "; (&e" + ho.getShopObjectStatus().toString()+ "&9)]");
+			            	data.addResponse("&b" + iname + " &9[&a" + stock + " &9" + L.get("AVAILABLE") + "; &a" + L.formatMoney(cost) + " &9" + L.get("EACH") + "; (&e" + ho.getShopObjectStatus().toString()+ "&9)]");
 			            } else {
-			            	data.addResponse("&b" + iname + " &9[&a" + stock + " &9" + L.get("AVAILABLE") + "; &a" + L.fC(cost) + " &9" + L.get("EACH") + "]");
+			            	data.addResponse("&b" + iname + " &9[&a" + stock + " &9" + L.get("AVAILABLE") + "; &a" + L.formatMoney(cost) + " &9" + L.get("EACH") + "]");
 			            }			
 					} else {
 						data.addResponse(L.get("REACHED_END"));
