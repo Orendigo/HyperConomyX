@@ -183,7 +183,6 @@ public class HyperPlayer implements HyperAccount {
 	
 	public boolean safeToDelete() {
 		DataManager em = hc.getDataManager();
-		if (balance > 0) {return false;}
 		if (hc.getMC().isOnline(this)) {return false;}
 		if (em.getHyperShopManager().getShops(this).size() > 0) return false;
 		if (hc.getDataManager().getChestShopHandler().getChestShops(this).size() > 0) return false;

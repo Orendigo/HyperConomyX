@@ -1,8 +1,11 @@
 package regalowl.hyperconomy.command;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import regalowl.hyperconomy.HyperConomy;
+import regalowl.hyperconomy.account.HyperAccount;
 import regalowl.hyperconomy.account.HyperBank;
 import regalowl.hyperconomy.account.HyperPlayer;
 
@@ -28,51 +31,30 @@ public class Hctop extends BaseCommand implements HyperCommand {
 			} else {
 				data.addResponse(L.get("HCTOP_INVALID"));
 				return data;
-			}
-			
-			ArrayList<String> players = new ArrayList<String>();
-			ArrayList<Double> balances = new ArrayList<Double>();
-			for (HyperPlayer hp : dm.getHyperPlayerManager().getHyperPlayers()) {
-				players.add(hp.getName());
-				balances.add(hp.getBalance());
-			}
-			for (HyperBank hb : dm.getHyperBankManager().getHyperBanks()) {
-				players.add(hb.getName());
-				balances.add(hb.getBalance());
-			}
-			ArrayList<String> splayers = new ArrayList<String>();
-			ArrayList<Double> sbalances = new ArrayList<Double>();
-			while (balances.size() > 0) {
-				int topBalanceIndex = 0;
-				double topBalance = 0;
-				for (int i = 0; i < balances.size(); i++) {
-					double curBal = balances.get(i);
-					if (curBal > topBalance) {
-						topBalance = curBal;
-						topBalanceIndex = i;
-					}
-				}
-				sbalances.add(topBalance);
-				splayers.add(players.get(topBalanceIndex));
-				balances.remove(topBalanceIndex);
-				players.remove(topBalanceIndex);
-			}
+			}                   
+			ArrayList<HyperAccount> accounts = dm.getAccounts();
+			Collections.sort(accounts, new Comparator<HyperAccount>() { 
+				public int compare(HyperAccount o1, HyperAccount o2) { 
+					return ((Double)o2.getBalance()).compareTo((Double)o1.getBalance()); 
+				} 
+			});
 			double serverTotal = 0.0;
-			for (int i = 0; i < sbalances.size(); i++) {
-				serverTotal += sbalances.get(i);
+			for (int i = 0; i < accounts.size(); i++) {
+				serverTotal += accounts.get(i).getBalance();
 			}
 			data.addResponse(L.get("TOP_BALANCE"));
-			data.addResponse(L.f(L.get("TOP_BALANCE_PAGE"), pe, (int)Math.ceil(sbalances.size()/10.0)));
+			data.addResponse(L.f(L.get("TOP_BALANCE_PAGE"), pe, (int)Math.ceil(accounts.size()/10.0)));
 			data.addResponse(L.f(L.get("TOP_BALANCE_TOTAL"), L.formatMoney(serverTotal)));
 			int ps = pe - 1;
 			ps *= 10;
 			pe *= 10;
 			for (int i = ps; i < pe; i++) {
-				if (i > (sbalances.size() - 1)) {
+				if (i > (accounts.size() - 1)) {
 					data.addResponse(L.get("REACHED_END"));
 					return data;
 				}
-				data.addResponse(L.f(L.get("TOP_BALANCE_BALANCE"), splayers.get(i), L.formatMoney(sbalances.get(i)), (i + 1)));
+				HyperAccount account = accounts.get(i);
+				data.addResponse(L.f(L.get("TOP_BALANCE_BALANCE"), account.getName(), L.formatMoney(account.getBalance()), (i + 1)));
 			}
 		} catch (Exception e) {
 			data.addResponse(L.get("HCTOP_INVALID"));

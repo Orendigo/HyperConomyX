@@ -21,7 +21,7 @@ public class Hcbalance extends BaseCommand implements HyperCommand {
 				data.addResponse(L.get("SHOP_LINE_BREAK"));
 				data.addResponse(L.f(L.get("PLAYER_BALANCE_MESSAGE"), "", L.formatMoney(balance)));
 				data.addResponse(L.get("SHOP_LINE_BREAK"));
-    		} else if (args.length == 1 && hp.hasPermission("hyperconomy.balanceall")) {
+    		} else if (args.length == 1 && (hp == null || hp.hasPermission("hyperconomy.balanceall"))) {
     			if (!dm.accountExists(args[0])) {
     				data.addResponse(L.get("PLAYER_NOT_FOUND"));
     			} else {
