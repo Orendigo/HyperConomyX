@@ -78,7 +78,6 @@ import regalowl.hyperconomy.util.HyperLock;
 import regalowl.hyperconomy.util.LanguageFile;
 import regalowl.hyperconomy.util.LibraryManager;
 import regalowl.hyperconomy.util.Log;
-import regalowl.hyperconomy.util.UpdateChecker;
 import regalowl.hyperconomy.util.UpdateYML;
 import regalowl.hyperconomy.webpage.HyperConomy_Web;
 import regalowl.simpledatalib.SimpleDataLib;
@@ -162,8 +161,6 @@ public class HyperConomy implements HyperEventListener, SDLEventListener {
 				hl.setLoadLock(false);
 				mc.setListenerState(false);
 				dMode.syncDebugConsoleMessage("Data loading completed.");
-				UpdateChecker uc = new UpdateChecker(this);
-				uc.runCheck();
 			} else if (devent.loadType == DataLoadType.LIBRARIES) {
 				if (lm.dependencyError()) {
 					disable(true);
