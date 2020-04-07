@@ -173,7 +173,7 @@ public class History {
 	 * @param economy
 	 * @return The percentage change in theoretical price for the given object and timevalue in hours
 	 */
-	public synchronized HashMap<TradeObject, String> getPercentChange(String economy, int timevalue) {
+	public synchronized HashMap<TradeObject, String> getPercentChangeAsString(String economy, int timevalue) {
 		if (sr == null) return null;
 		HashMap<TradeObject, ArrayList<Double>> allValues = new HashMap<TradeObject, ArrayList<Double>>();
 		QueryResult result = sr.select("SELECT OBJECT, PRICE FROM hyperconomy_history WHERE ECONOMY = '" + economy + "' ORDER BY TIME DESC");
@@ -220,6 +220,57 @@ public class History {
 				}
 			} else {
 				relevantValues.put(ho, "?");
+			}
+		}
+		return relevantValues;
+	}
+
+	public synchronized HashMap<TradeObject, Double> getPercentChange(String economy, int timevalue) {
+		if (sr == null) return null;
+		HashMap<TradeObject, ArrayList<Double>> allValues = new HashMap<TradeObject, ArrayList<Double>>();
+		QueryResult result = sr.select("SELECT OBJECT, PRICE FROM hyperconomy_history WHERE ECONOMY = '" + economy + "' ORDER BY TIME DESC");
+		while (result.next()) {
+			TradeObject ho = em.getEconomy(economy).getTradeObject(result.getString("OBJECT"));
+			double price = result.getDouble("PRICE");
+			if (!allValues.containsKey(ho)) {
+				ArrayList<Double> values = new ArrayList<Double>();
+				values.add(price);
+				allValues.put(ho, values);
+			} else {
+				ArrayList<Double> values = allValues.get(ho);
+				values.add(price);
+				allValues.put(ho, values);
+			}
+		}
+		result.close();
+		
+		ArrayList<TradeObject> hobjects =  em.getEconomy(economy).getTradeObjects();
+		HashMap<TradeObject, Double> relevantValues = new HashMap<TradeObject, Double>();
+		for (TradeObject ho:hobjects) {
+			if (allValues.containsKey(ho)) {
+				ArrayList<Double> historicValues = allValues.get(ho);
+				if (historicValues.size() >= timevalue) {
+					double historicValue = historicValues.get(timevalue - 1);
+					double currentvalue = 0.0;
+					if (ho.getType() == TradeObjectType.ENCHANTMENT) {
+						currentvalue = ho.getSellPrice(EnchantmentClass.DIAMOND);
+					} else if (ho.getType() == TradeObjectType.ITEM) {
+						currentvalue = ho.getBuyPrice(1);
+					} else {
+						currentvalue = ho.getBuyPrice(1);
+					}
+					if (historicValue == 0.0) {
+						relevantValues.put(ho, 0.0);
+						continue;
+					}
+					double percentChange = ((currentvalue - historicValue) / historicValue) * 100.0;
+					percentChange = CommonFunctions.round(percentChange, 3);
+					relevantValues.put(ho, percentChange);
+				} else {
+					relevantValues.put(ho, 0.0);
+				}
+			} else {
+				relevantValues.put(ho, 0.0);
 			}
 		}
 		return relevantValues;
