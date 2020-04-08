@@ -1,5 +1,7 @@
 package regalowl.hyperconomy.display;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 
@@ -20,8 +22,80 @@ import regalowl.hyperconomy.tradeobject.TradeObject;
 import regalowl.hyperconomy.tradeobject.TradeObjectType;
 import regalowl.hyperconomy.util.LanguageFile;
 
-public class InfoSign {
-	private SignType type;
+
+public abstract class InfoSign {
+	HyperConomy hc;
+	HLocation loc;
+	String economy;
+	String type;
+	String[] parameters;
+	String[] lines = {"","","",""};
+	boolean valid;
+
+	public InfoSign(HyperConomy hc, HLocation loc, String economy, String type, String[] parameters) {
+		this.hc = hc;
+		this.loc = loc;
+		this.economy = economy;
+		this.type = type;
+		this.parameters = parameters;
+	}
+
+	public void update() {}
+
+	public HLocation getLocation() {
+		return loc;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public String getEconomy() {
+		return economy;
+	}
+
+	public String getParameter(int index) {
+		return parameters[index];
+	}
+
+	public boolean isValid() {
+		return valid;
+	}
+
+	public void disableSign() {
+		HSign sign = getSign();
+		if(sign != null) {
+			sign.setLine(0, "");
+			sign.setLine(1, "");
+			sign.setLine(2, "");
+			sign.setLine(3, "");
+			sign.update();
+		}
+	}
+
+	public void updateHSign() {
+		HSign sign = getSign();
+		if(lines[0] != "")
+			sign.setLine(0, lines[0]);
+		if(lines[1] != "")
+			sign.setLine(1, lines[1]);
+		if(lines[2] != "")
+			sign.setLine(2, lines[2]);
+		if(lines[3] != "")
+			sign.setLine(3, lines[3]);
+        sign.update();
+	}
+	
+	protected HSign getSign() {
+		if (loc == null) return null;
+		HBlock sb = new HBlock(hc, loc);
+		if (!sb.isLoaded()) sb.load();
+		return hc.getMC().getSign(loc);
+	}
+}
+
+class OldInfoSign {
+	private SignObject type;
 	private String objectName;
 	private double multiplier;
 	private String economy;
@@ -39,7 +113,7 @@ public class InfoSign {
 	private int timeValue;
 	private String increment;
 
-	InfoSign(HyperConomy hc, HLocation signLoc, SignType type, String objectName, double multiplier, String economy, EnchantmentClass enchantClass) {
+	OldInfoSign(HyperConomy hc, HLocation signLoc, SignObject type, String objectName, double multiplier, String economy, EnchantmentClass enchantClass) {
 		this.multiplier = multiplier;
 		if (enchantClass == null) {
 			this.enchantClass = EnchantmentClass.DIAMOND;
@@ -80,7 +154,7 @@ public class InfoSign {
 	}
 
 	
-	InfoSign(HyperConomy hc, HLocation signLoc, SignType type, String objectName, double multiplier, String economy, EnchantmentClass enchantClass, String[] lines) {
+	OldInfoSign(HyperConomy hc, HLocation signLoc, SignObject type, String objectName, double multiplier, String economy, EnchantmentClass enchantClass, String[] lines) {
 		this.multiplier = multiplier;
 		if (enchantClass == null) {
 			this.enchantClass = EnchantmentClass.DIAMOND;
@@ -118,11 +192,10 @@ public class InfoSign {
 		values.put("X", loc.getBlockX()+"");
 		values.put("Y", loc.getBlockY()+"");
 		values.put("Z", loc.getBlockZ()+"");
-		values.put("HYPEROBJECT", objectName);
-		values.put("TYPE", type.toString());
-		values.put("MULTIPLIER", multiplier+"");
-		values.put("ECONOMY", economy+"");
-		values.put("ECLASS", enchantClass.toString());
+		values.put("TYPE", objectName);
+		values.put("PARAMETER1", type.toString());
+		values.put("PARAMETER2", multiplier+"");
+		values.put("ECONOMY", enchantClass.toString());
 		hc.getSQLWrite().performInsert("hyperconomy_info_signs", values);
 		if (getSign() == null) {
 			deleteSign();
@@ -153,7 +226,7 @@ public class InfoSign {
 		return loc;
 	}
 
-	public SignType getType() {
+	public SignObject getType() {
 		return type;
 	}
 
@@ -180,151 +253,151 @@ public class InfoSign {
 
 	public void update() {
 		try {
-			switch (type) {
-				case BUY:
-					if (to.getType() == TradeObjectType.ENCHANTMENT) {
-						double cost = to.getBuyPrice(enchantClass);
-						cost = CommonFunctions.twoDecimals((cost + to.getPurchaseTax(cost)) * multiplier);
-						line3 = "&f" + "Buy:";
-						line4 = "&a" + L.formatMoney(cost);
-					} else if (to.getType() == TradeObjectType.ITEM) {
-						double pcost = to.getBuyPrice(1);
-						line3 = "&f" + "Buy:";
-						line4 = "&a" + L.formatMoney(CommonFunctions.twoDecimals((pcost + to.getPurchaseTax(pcost)) * multiplier));
-					} else {
-						double pcost = to.getBuyPrice(1);
-						line3 = "&f" + "Buy:";
-						line4 = "&a" + L.formatMoney(CommonFunctions.twoDecimals((pcost + to.getPurchaseTax(pcost)) * multiplier));
-					}
-					break;
-				case SELL:
-					if (to.getType() == TradeObjectType.ENCHANTMENT) {
-						double value = to.getSellPrice(enchantClass);
-						value = CommonFunctions.twoDecimals((value - to.getSalesTaxEstimate(value)) * multiplier);
-						line3 = "&f" + "Sell:";
-						line4 = "&a" + L.formatMoney(value);
-					} else if (to.getType() == TradeObjectType.ITEM) {
-						double value = to.getSellPrice(1);
-						value = CommonFunctions.twoDecimals((value - to.getSalesTaxEstimate(value)) * multiplier);
-						line3 = "&f" + "Sell:";
-						line4 = "&a" + L.formatMoney(value);
-					} else {
-						double value = to.getSellPrice(1);
-						value = CommonFunctions.twoDecimals((value - to.getSalesTaxEstimate(value)) * multiplier);
-						line3 = "&f" + "Sell:";
-						line4 = "&a" + L.formatMoney(value);
-					}
-					break;
-				case STOCK:
-					line3 = "&f" + "Stock:";
-					line4 = "&a" + "" + L.formatDouble(to.getStock());
-					break;
-				case TOTALSTOCK:
-					line3 = "&f" + "Total Stock:";
-					line4 = "&a" + "" + L.formatDouble(to.getTotalStock());
-					break;
-				case VALUE:
-					line3 = "&f" + "Value:";
-					line4 = "&a" + "" + to.getValue() * multiplier;
-					break;
-				case STATUS:
-					boolean staticstatus;
-					staticstatus = to.isStatic();
-					line3 = "&f" + "Status:";
-					if (staticstatus) {
-						line4 = "&a" + "Static";
-					} else {
-						boolean initialstatus;
-						initialstatus = to.useInitialPricing();
-						if (initialstatus) {
-							line4 = "&a" + "Initial";
-						} else {
-							line4 = "&a" + "Dynamic";
-						}
-					}
-					break;
-				case STATICPRICE:
-					line3 = "&f" + "Static Price:";
-					line4 = "&a" + "" + L.formatMoney(to.getStaticPrice() * multiplier);
-					break;
-				case STARTPRICE:
-					line3 = "&f" + "Start Price:";
-					line4 = "&a" + "" + L.formatMoney(to.getStartPrice() * multiplier);
-					break;
-				case MEDIAN:
-					line3 = "&f" + "Median:";
-					line4 = "&a" + "" + L.formatDouble(to.getMedian());
-					break;
-				case HISTORY:
-					String timeIncrement = hc.getMC().removeColor(line4);
-					if (timeIncrement.contains("(")) timeIncrement = timeIncrement.substring(0, timeIncrement.indexOf("("));
-					timeIncrement = timeIncrement.toUpperCase().replaceAll("[^A-Z]", "");
-					String timeValueString = hc.getMC().removeColor(line4);
-					if (timeValueString.contains("(")) timeValueString = timeValueString.substring(0, timeValueString.indexOf("("));
-					timeValueString = timeValueString.toUpperCase().replaceAll("[^0-9]", "");
-					int timeValue = Integer.parseInt(timeValueString);
-					int timeValueHours = timeValue;
-					if (timeIncrement.equals("H")) {
-						timeValueHours *= 1;
-					} else if (timeIncrement.equals("D")) {
-						timeValueHours *= 24;
-					} else if (timeIncrement.equals("W")) {
-						timeValueHours *= 168;
-					} else if (timeIncrement.equals("M")) {
-						timeValueHours *= 672;
-					}
-					updateHistorySign(timeValueHours, timeValue, timeIncrement);
-					break;
-				case TAX:
-					if (to.getType() == TradeObjectType.ENCHANTMENT) {
-						double price = to.getBuyPrice(enchantClass);
-						double taxpaid = CommonFunctions.twoDecimals(to.getPurchaseTax(price) * multiplier);
-						line3 = "&f" + "Tax:";
-						line4 = "&a" + "" + L.formatMoney(taxpaid);
-					} else if (to.getType() == TradeObjectType.ITEM) {
-						line3 = "&f" + "Tax:";
-						line4 = "&a" + L.formatMoney(CommonFunctions.twoDecimals(to.getPurchaseTax(to.getBuyPrice(1) * multiplier)));
-					} else {
-						BasicTradeObject bo = (BasicTradeObject)to;
-						line3 = "&f" + "Tax:";
-						line4 = "&a" + L.formatMoney(CommonFunctions.twoDecimals(bo.getPurchaseTax(bo.getBuyPrice(1) * multiplier)));
-					}
-					break;
-				case SB:
-					if (to.getType() == TradeObjectType.ENCHANTMENT) {
-						double cost = to.getBuyPrice(enchantClass);
-						cost = CommonFunctions.twoDecimals((cost + to.getPurchaseTax(cost)) * multiplier);
-						line4 = "&f" + "B:" + "&a" + L.formatMoney(cost);
-						double value = to.getSellPrice(enchantClass);
-						value = CommonFunctions.twoDecimals((value - to.getSalesTaxEstimate(value)) * multiplier);
-						line3 = "&f" + "S:" + "&a" + L.formatMoney(value);
-					} else if (to.getType() == TradeObjectType.ITEM) {
-						double pcost = to.getBuyPrice(1);
-						line4 = "&f" + "B:" + "&a" + L.formatMoney(CommonFunctions.twoDecimals((pcost + to.getPurchaseTax(pcost)) * multiplier));
-						double value = to.getSellPrice(1);
-						value = CommonFunctions.twoDecimals((value - to.getSalesTaxEstimate(value)) * multiplier);
-						line3 = "&f" + "S:" + "&a" + L.formatMoney(value);
-					} else {
-						double pcost = to.getBuyPrice(1);
-						line4 = "&f" + "B:" + "&a" + L.formatMoney(CommonFunctions.twoDecimals((pcost + to.getPurchaseTax(pcost)) * multiplier));
-						double value = to.getSellPrice(1);
-						value = CommonFunctions.twoDecimals((value - to.getSalesTaxEstimate(value)) * multiplier);
-						line3 = "&f" + "S:" + "&a" + L.formatMoney(value);
-					}
-					break;
-				default:
-					break;
-			}
-			if (!type.equals(SignType.HISTORY)) {
-				HSign s = getSign();
-				if (s != null) {
-					s.setLine(0, line1);
-					s.setLine(1, line2);
-					s.setLine(2, line3);
-					s.setLine(3, line4);
-					s.update();
-				}
-			}
+			// switch (type) {
+			// 	case BUY:
+			// 		if (to.getType() == TradeObjectType.ENCHANTMENT) {
+			// 			double cost = to.getBuyPrice(enchantClass);
+			// 			cost = CommonFunctions.twoDecimals((cost + to.getPurchaseTax(cost)) * multiplier);
+			// 			line3 = "&f" + "Buy:";
+			// 			line4 = "&a" + L.formatMoney(cost);
+			// 		} else if (to.getType() == TradeObjectType.ITEM) {
+			// 			double pcost = to.getBuyPrice(1);
+			// 			line3 = "&f" + "Buy:";
+			// 			line4 = "&a" + L.formatMoney(CommonFunctions.twoDecimals((pcost + to.getPurchaseTax(pcost)) * multiplier));
+			// 		} else {
+			// 			double pcost = to.getBuyPrice(1);
+			// 			line3 = "&f" + "Buy:";
+			// 			line4 = "&a" + L.formatMoney(CommonFunctions.twoDecimals((pcost + to.getPurchaseTax(pcost)) * multiplier));
+			// 		}
+			// 		break;
+			// 	case SELL:
+			// 		if (to.getType() == TradeObjectType.ENCHANTMENT) {
+			// 			double value = to.getSellPrice(enchantClass);
+			// 			value = CommonFunctions.twoDecimals((value - to.getSalesTaxEstimate(value)) * multiplier);
+			// 			line3 = "&f" + "Sell:";
+			// 			line4 = "&a" + L.formatMoney(value);
+			// 		} else if (to.getType() == TradeObjectType.ITEM) {
+			// 			double value = to.getSellPrice(1);
+			// 			value = CommonFunctions.twoDecimals((value - to.getSalesTaxEstimate(value)) * multiplier);
+			// 			line3 = "&f" + "Sell:";
+			// 			line4 = "&a" + L.formatMoney(value);
+			// 		} else {
+			// 			double value = to.getSellPrice(1);
+			// 			value = CommonFunctions.twoDecimals((value - to.getSalesTaxEstimate(value)) * multiplier);
+			// 			line3 = "&f" + "Sell:";
+			// 			line4 = "&a" + L.formatMoney(value);
+			// 		}
+			// 		break;
+			// 	case STOCK:
+			// 		line3 = "&f" + "Stock:";
+			// 		line4 = "&a" + "" + L.formatDouble(to.getStock());
+			// 		break;
+			// 	case TOTALSTOCK:
+			// 		line3 = "&f" + "Total Stock:";
+			// 		line4 = "&a" + "" + L.formatDouble(to.getTotalStock());
+			// 		break;
+			// 	case VALUE:
+			// 		line3 = "&f" + "Value:";
+			// 		line4 = "&a" + "" + to.getValue() * multiplier;
+			// 		break;
+			// 	case STATUS:
+			// 		boolean staticstatus;
+			// 		staticstatus = to.isStatic();
+			// 		line3 = "&f" + "Status:";
+			// 		if (staticstatus) {
+			// 			line4 = "&a" + "Static";
+			// 		} else {
+			// 			boolean initialstatus;
+			// 			initialstatus = to.useInitialPricing();
+			// 			if (initialstatus) {
+			// 				line4 = "&a" + "Initial";
+			// 			} else {
+			// 				line4 = "&a" + "Dynamic";
+			// 			}
+			// 		}
+			// 		break;
+			// 	case STATICPRICE:
+			// 		line3 = "&f" + "Static Price:";
+			// 		line4 = "&a" + "" + L.formatMoney(to.getStaticPrice() * multiplier);
+			// 		break;
+			// 	case STARTPRICE:
+			// 		line3 = "&f" + "Start Price:";
+			// 		line4 = "&a" + "" + L.formatMoney(to.getStartPrice() * multiplier);
+			// 		break;
+			// 	case MEDIAN:
+			// 		line3 = "&f" + "Median:";
+			// 		line4 = "&a" + "" + L.formatDouble(to.getMedian());
+			// 		break;
+			// 	case HISTORY:
+			// 		String timeIncrement = hc.getMC().removeColor(line4);
+			// 		if (timeIncrement.contains("(")) timeIncrement = timeIncrement.substring(0, timeIncrement.indexOf("("));
+			// 		timeIncrement = timeIncrement.toUpperCase().replaceAll("[^A-Z]", "");
+			// 		String timeValueString = hc.getMC().removeColor(line4);
+			// 		if (timeValueString.contains("(")) timeValueString = timeValueString.substring(0, timeValueString.indexOf("("));
+			// 		timeValueString = timeValueString.toUpperCase().replaceAll("[^0-9]", "");
+			// 		int timeValue = Integer.parseInt(timeValueString);
+			// 		int timeValueHours = timeValue;
+			// 		if (timeIncrement.equals("H")) {
+			// 			timeValueHours *= 1;
+			// 		} else if (timeIncrement.equals("D")) {
+			// 			timeValueHours *= 24;
+			// 		} else if (timeIncrement.equals("W")) {
+			// 			timeValueHours *= 168;
+			// 		} else if (timeIncrement.equals("M")) {
+			// 			timeValueHours *= 672;
+			// 		}
+			// 		updateHistorySign(timeValueHours, timeValue, timeIncrement);
+			// 		break;
+			// 	case TAX:
+			// 		if (to.getType() == TradeObjectType.ENCHANTMENT) {
+			// 			double price = to.getBuyPrice(enchantClass);
+			// 			double taxpaid = CommonFunctions.twoDecimals(to.getPurchaseTax(price) * multiplier);
+			// 			line3 = "&f" + "Tax:";
+			// 			line4 = "&a" + "" + L.formatMoney(taxpaid);
+			// 		} else if (to.getType() == TradeObjectType.ITEM) {
+			// 			line3 = "&f" + "Tax:";
+			// 			line4 = "&a" + L.formatMoney(CommonFunctions.twoDecimals(to.getPurchaseTax(to.getBuyPrice(1) * multiplier)));
+			// 		} else {
+			// 			BasicTradeObject bo = (BasicTradeObject)to;
+			// 			line3 = "&f" + "Tax:";
+			// 			line4 = "&a" + L.formatMoney(CommonFunctions.twoDecimals(bo.getPurchaseTax(bo.getBuyPrice(1) * multiplier)));
+			// 		}
+			// 		break;
+			// 	case SB:
+			// 		if (to.getType() == TradeObjectType.ENCHANTMENT) {
+			// 			double cost = to.getBuyPrice(enchantClass);
+			// 			cost = CommonFunctions.twoDecimals((cost + to.getPurchaseTax(cost)) * multiplier);
+			// 			line4 = "&f" + "B:" + "&a" + L.formatMoney(cost);
+			// 			double value = to.getSellPrice(enchantClass);
+			// 			value = CommonFunctions.twoDecimals((value - to.getSalesTaxEstimate(value)) * multiplier);
+			// 			line3 = "&f" + "S:" + "&a" + L.formatMoney(value);
+			// 		} else if (to.getType() == TradeObjectType.ITEM) {
+			// 			double pcost = to.getBuyPrice(1);
+			// 			line4 = "&f" + "B:" + "&a" + L.formatMoney(CommonFunctions.twoDecimals((pcost + to.getPurchaseTax(pcost)) * multiplier));
+			// 			double value = to.getSellPrice(1);
+			// 			value = CommonFunctions.twoDecimals((value - to.getSalesTaxEstimate(value)) * multiplier);
+			// 			line3 = "&f" + "S:" + "&a" + L.formatMoney(value);
+			// 		} else {
+			// 			double pcost = to.getBuyPrice(1);
+			// 			line4 = "&f" + "B:" + "&a" + L.formatMoney(CommonFunctions.twoDecimals((pcost + to.getPurchaseTax(pcost)) * multiplier));
+			// 			double value = to.getSellPrice(1);
+			// 			value = CommonFunctions.twoDecimals((value - to.getSalesTaxEstimate(value)) * multiplier);
+			// 			line3 = "&f" + "S:" + "&a" + L.formatMoney(value);
+			// 		}
+			// 		break;
+			// 	default:
+			// 		break;
+			// }
+			// if (!type.equals(SignObject.HISTORY)) {
+			// 	HSign s = getSign();
+			// 	if (s != null) {
+			// 		s.setLine(0, line1);
+			// 		s.setLine(1, line2);
+			// 		s.setLine(2, line3);
+			// 		s.setLine(3, line4);
+			// 		s.update();
+			// 	}
+			// }
 		} catch (Exception e) {
 			hc.gSDL().getErrorWriter().writeError(e);
 		}
@@ -381,7 +454,7 @@ public class InfoSign {
 	
 	
 	public void deleteSign() {
-		hc.getInfoSignHandler().removeSign(this);
+		//hc.getInfoSignHandler().removeSign(this);
 		HashMap<String,String> conditions = new HashMap<String,String>();
 		conditions.put("WORLD", loc.getWorld());
 		conditions.put("X", loc.getBlockX()+"");

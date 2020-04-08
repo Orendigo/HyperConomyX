@@ -129,12 +129,6 @@ public class BasicTradeObject implements TradeObject {
 			if (!s.getEconomy().equals(economy)) continue;
 			s.removeTradeObject(this);
 		}
-		for (InfoSign iSign:hc.getInfoSignHandler().getInfoSigns()) {
-			if (!iSign.getEconomy().equals(economy)) continue;
-			if (iSign.getTradeObject().equals(this)) {
-				iSign.deleteSign();
-			}
-		}
 		if (economy.equalsIgnoreCase("default")) {
 			for (ItemDisplay disp:hc.getItemDisplay().getDisplays()) {
 				if (disp.getHyperObject().equals(this)) disp.delete();

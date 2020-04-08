@@ -1,6 +1,7 @@
 package regalowl.hyperconomy.display;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -8,18 +9,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import regalowl.simpledatalib.sql.QueryResult;
 import regalowl.simpledatalib.sql.SQLRead;
-import regalowl.hyperconomy.DataManager;
 import regalowl.hyperconomy.HyperConomy;
 import regalowl.hyperconomy.account.HyperPlayer;
+import regalowl.hyperconomy.event.HyperBankModificationEvent;
 import regalowl.hyperconomy.event.HyperEvent;
 import regalowl.hyperconomy.event.HyperEventListener;
+import regalowl.hyperconomy.event.HyperPlayerModificationEvent;
 import regalowl.hyperconomy.event.TradeObjectModificationEvent;
+import regalowl.hyperconomy.event.TradeObjectModificationType;
 import regalowl.hyperconomy.event.minecraft.HBlockBreakEvent;
 import regalowl.hyperconomy.event.minecraft.HSignChangeEvent;
 import regalowl.hyperconomy.minecraft.HLocation;
 import regalowl.hyperconomy.minecraft.HSign;
-import regalowl.hyperconomy.tradeobject.EnchantmentClass;
-import regalowl.hyperconomy.tradeobject.TradeObject;
 
 public class InfoSignHandler implements HyperEventListener {
 
@@ -54,8 +55,20 @@ public class InfoSignHandler implements HyperEventListener {
 					public void run() {
 						while (dbData.next()) {
 							HLocation l = new HLocation(dbData.getString("WORLD"), dbData.getInt("X"),dbData.getInt("Y"),dbData.getInt("Z"));
-							infoSigns.add(new InfoSign(hc, l, SignType.fromString(dbData.getString("TYPE")), dbData.getString("HYPEROBJECT"), 
-									dbData.getDouble("MULTIPLIER"), dbData.getString("ECONOMY"), EnchantmentClass.fromString(dbData.getString("ECLASS"))));
+							InfoSign is = null;
+							String parameters[] = {dbData.getString("PARAMETER1"), dbData.getString("PARAMETER2"), dbData.getString("PARAMETER3")};
+							SignObject object = SignObject.fromString(dbData.getString("TYPE"));
+							switch(object) {
+								case TRADEOBJECT:
+									is = new TradeObjectInfoSign(hc, l, dbData.getString("ECONOMY"), dbData.getString("TYPE"), parameters);
+									break;
+								default:
+									is = null;
+							}
+							if(is.isValid()) 
+								infoSigns.add(is);
+							else
+								removeSign(is);
 						}
 						dbData.close();
 						dbData = null;
@@ -72,44 +85,73 @@ public class InfoSignHandler implements HyperEventListener {
 		if (event instanceof HBlockBreakEvent) {
 			HBlockBreakEvent hevent = (HBlockBreakEvent)event;
 			HLocation l = hevent.getBlock().getLocation();
-			InfoSign iSign = getInfoSign(l);
-			if (iSign == null) {return;}
-			iSign.deleteSign();
+			InfoSign is = getInfoSign(l);
+			if (is == null) {return;}
+			removeSign(is);
 		} else if (event instanceof TradeObjectModificationEvent) {
-			//TradeObjectModificationEvent hevent = (TradeObjectModificationEvent)event;
+			TradeObjectModificationEvent hevent = (TradeObjectModificationEvent)event;
+			if(hevent.getTradeObjectModificationType() == TradeObjectModificationType.DELETED) {
+				for(InfoSign is : infoSigns) {
+					if(is instanceof TradeObjectInfoSign)
+						if(((TradeObjectInfoSign)is).getTradeObject().equals(hevent.getTradeObject()))
+							removeSign(is);			
+				}
+			}
 			updateSigns();
+		} else if (event instanceof HyperBankModificationEvent) {
+			HyperBankModificationEvent hevent = (HyperBankModificationEvent)event;
+			updateSigns();
+			//TODO: Delete account
+			// for(InfoSign is : infoSigns) {
+			// 	if(is instanceof AccountInfoSign)
+			// 		if(((AccountInfoSign)is).getAccount().getName().equals(hevent.getHyperBank().getName()))
+			// 			removeSign(is);			
+			// }
+		} else if (event instanceof HyperPlayerModificationEvent) {
+			HyperPlayerModificationEvent hevent = (HyperPlayerModificationEvent)event;
+			updateSigns();
+			//TODO: Delete account
+			// for(InfoSign is : infoSigns) {
+			// 	if(is instanceof AccountInfoSign)
+			// 		if(((AccountInfoSign)is).getAccount().getName().equals(hevent.getHyperPlayer().getName()))
+			// 			removeSign(is);			
+			// }
 		} else if (event instanceof HSignChangeEvent) {
 			HSignChangeEvent hevent = (HSignChangeEvent)event;
 			try {
 				HSign s = hevent.getSign();
-				DataManager em = hc.getDataManager();
 				HyperPlayer hp = hevent.getHyperPlayer();
 				if (hp.hasPermission("hyperconomy.createsign")) {
-					String[] lines = s.getLines();
 					String economy = "default";
 					if (hp != null && hp.getEconomy() != null) {
 						economy = hp.getEconomy();
 					}
-					String objectName = lines[0].trim() + lines[1].trim();
-					TradeObject to = em.getEconomy(economy).getTradeObject(objectName);
-					if (to != null) objectName = to.getDisplayName();
-					int multiplier = 1;
-					try {
-						multiplier = Integer.parseInt(lines[3]);
-					} catch (Exception e) {
-						multiplier = 1;
-					}
-					EnchantmentClass enchantClass = EnchantmentClass.NONE;
-					if (EnchantmentClass.fromString(lines[3]) != null) {
-						enchantClass = EnchantmentClass.fromString(lines[3]);
-					}
-					if (em.getEconomy(hp.getEconomy()).enchantTest(objectName) && enchantClass == EnchantmentClass.NONE) {
-						enchantClass = EnchantmentClass.DIAMOND;
-					}
-					if (em.getEconomy(hp.getEconomy()).objectTest(objectName)) {
-						SignType type = SignType.fromString(lines[2]);
-						if (type != null) {
-							infoSigns.add(new InfoSign(hc, s.getLocation(), type, objectName, multiplier, economy, enchantClass, lines));
+					SignObject object = SignObject.fromString(s.getLine(2));
+					InfoSign is;
+					if (object != null) {
+						switch(object) {
+							case TRADEOBJECT:
+								is = TradeObjectInfoSign.fromHSign(hc, s.getLocation(), economy, s);
+								break;
+							case ACCOUNT:
+								is = AccountInfoSign.fromHSign(hc, s.getLocation(), economy, s);
+								break;
+							default:
+								is = null;
+						}
+						if(is.isValid()) {
+							infoSigns.add(is);
+							HashMap<String,String> values = new HashMap<String,String>();
+							values.put("WORLD", is.getLocation().getWorld());
+							values.put("X", is.getLocation().getBlockX()+"");
+							values.put("Y", is.getLocation().getBlockY()+"");
+							values.put("Z", is.getLocation().getBlockZ()+"");
+							values.put("TYPE", is.getType());
+							values.put("PARAMETER1", (is.getParameter(0) == null) ? "" : is.getParameter(0));
+							values.put("PARAMETER2", (is.getParameter(1) == null) ? "" : is.getParameter(1));
+							values.put("PARAMETER3", (is.getParameter(2) == null) ? "" : is.getParameter(2));
+							values.put("ECONOMY", is.getEconomy());
+							hc.getSQLWrite().performInsert("hyperconomy_info_signs", values);
 							updateSigns();
 						}
 					}
@@ -119,13 +161,17 @@ public class InfoSignHandler implements HyperEventListener {
 			}
 		}
 	}
-
-
 	
 	public void removeSign(InfoSign is) {
-		if (infoSigns.contains(is)) {
-			infoSigns.remove(is);
-		}
+		is.disableSign();
+		infoSigns.remove(is);
+		HLocation loc = is.getLocation();
+		HashMap<String,String> conditions = new HashMap<String,String>();
+		conditions.put("WORLD", loc.getWorld());
+		conditions.put("X", loc.getBlockX()+"");
+		conditions.put("Y", loc.getBlockY()+"");
+		conditions.put("Z", loc.getBlockZ()+"");
+		hc.getSQLWrite().performDelete("hyperconomy_info_signs", conditions);
 	}
 	
 
@@ -161,11 +207,11 @@ public class InfoSignHandler implements HyperEventListener {
 							return;
 						}
 					}
-					InfoSign cs = infoSigns.get(currentSign);
-					if (cs.getSign() != null) {
-						cs.update();
+					InfoSign is = infoSigns.get(currentSign);
+					if (is.getSign() != null) {
+						is.update();
 					} else {
-						cs.deleteSign();
+						removeSign(is);
 					}
 					currentSign++;
 				}

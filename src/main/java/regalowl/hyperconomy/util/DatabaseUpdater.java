@@ -401,11 +401,11 @@ public class DatabaseUpdater {
 		compositeKey.add(f);
 		f = t.addField("Z", FieldType.INTEGER);f.setNotNull();
 		compositeKey.add(f);
-		f = t.addField("HYPEROBJECT", FieldType.VARCHAR);f.setFieldSize(255);f.setNotNull();
 		f = t.addField("TYPE", FieldType.VARCHAR);f.setFieldSize(255);f.setNotNull();
-		f = t.addField("MULTIPLIER", FieldType.INTEGER);f.setNotNull();
+		f = t.addField("PARAMETER1", FieldType.VARCHAR);f.setFieldSize(255);f.setNotNull();
+		f = t.addField("PARAMETER2", FieldType.VARCHAR);f.setFieldSize(255);f.setNotNull();
+		f = t.addField("PARAMETER3", FieldType.VARCHAR);f.setFieldSize(255);f.setNotNull();
 		f = t.addField("ECONOMY", FieldType.VARCHAR);f.setFieldSize(255);f.setNotNull();
-		f = t.addField("ECLASS", FieldType.VARCHAR);f.setFieldSize(255);f.setNotNull();
 		t.setCompositeKey(compositeKey);
 		
 

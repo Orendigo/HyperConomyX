@@ -48,7 +48,7 @@ import org.bukkit.potion.PotionType;
 
 import regalowl.hyperconomy.HyperConomy;
 import regalowl.hyperconomy.account.HyperPlayer;
-import regalowl.hyperconomy.display.SignType;
+import regalowl.hyperconomy.display.SignObject;
 import regalowl.hyperconomy.inventory.HBannerMeta;
 import regalowl.hyperconomy.inventory.HBookMeta;
 import regalowl.hyperconomy.inventory.HColor;
@@ -135,7 +135,7 @@ public class BukkitCommon {
 		if (b != null && b.getType().toString().contains("SIGN")) {
 			Sign s = (Sign) b.getState();
 			String type = ChatColor.stripColor(s.getLine(2)).trim().replace(":", "").replace(" ", "");
-			if (SignType.isSignType(type)) return true;
+			if (SignObject.isSignType(type)) return true;
 		}
 		return false;
 	}
