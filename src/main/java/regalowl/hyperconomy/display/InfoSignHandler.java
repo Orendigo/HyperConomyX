@@ -62,6 +62,9 @@ public class InfoSignHandler implements HyperEventListener {
 								case TRADEOBJECT:
 									is = new TradeObjectInfoSign(hc, l, dbData.getString("ECONOMY"), dbData.getString("TYPE"), parameters);
 									break;
+								case ACCOUNT:
+									is = new AccountInfoSign(hc, l, dbData.getString("ECONOMY"), dbData.getString("TYPE"), parameters);
+									break;
 								default:
 									is = null;
 							}
@@ -93,29 +96,27 @@ public class InfoSignHandler implements HyperEventListener {
 			if(hevent.getTradeObjectModificationType() == TradeObjectModificationType.DELETED) {
 				for(InfoSign is : infoSigns) {
 					if(is instanceof TradeObjectInfoSign)
-						if(((TradeObjectInfoSign)is).getTradeObject().equals(hevent.getTradeObject()))
+						if(((TradeObjectInfoSign)is).getTradeObject().getName().equals(hevent.getTradeObject().getName()))
 							removeSign(is);			
 				}
 			}
 			updateSigns();
 		} else if (event instanceof HyperBankModificationEvent) {
 			HyperBankModificationEvent hevent = (HyperBankModificationEvent)event;
+			if(hevent.getHyperBank().deleted())
+				for(InfoSign is : infoSigns)
+					if(is instanceof AccountInfoSign)
+						if(((AccountInfoSign)is).getAccount().getName().equals(hevent.getHyperBank().getName()))
+							removeSign(is);
 			updateSigns();
-			//TODO: Delete account
-			// for(InfoSign is : infoSigns) {
-			// 	if(is instanceof AccountInfoSign)
-			// 		if(((AccountInfoSign)is).getAccount().getName().equals(hevent.getHyperBank().getName()))
-			// 			removeSign(is);			
-			// }
 		} else if (event instanceof HyperPlayerModificationEvent) {
 			HyperPlayerModificationEvent hevent = (HyperPlayerModificationEvent)event;
+			if(hevent.getHyperPlayer().deleted())
+				for(InfoSign is : infoSigns)
+					if(is instanceof AccountInfoSign)
+						if(((AccountInfoSign)is).getAccount().getName().equals(hevent.getHyperPlayer().getName()))
+							removeSign(is);			
 			updateSigns();
-			//TODO: Delete account
-			// for(InfoSign is : infoSigns) {
-			// 	if(is instanceof AccountInfoSign)
-			// 		if(((AccountInfoSign)is).getAccount().getName().equals(hevent.getHyperPlayer().getName()))
-			// 			removeSign(is);			
-			// }
 		} else if (event instanceof HSignChangeEvent) {
 			HSignChangeEvent hevent = (HSignChangeEvent)event;
 			try {

@@ -57,7 +57,7 @@ public class Importbalance extends BaseCommand implements HyperCommand {
 		}
 		//data.addResponse("[" + hc.getCommonFunctions().implode(importedPlayers, ",") + "]");
 		data.addResponse(L.get("PLAYERS_IMPORTED"));
-		hc.getHyperPlayerManager().purgeDeadAccounts();
+		//hc.getHyperPlayerManager().purgeDeadAccounts();
 		return data;
 	}
 }

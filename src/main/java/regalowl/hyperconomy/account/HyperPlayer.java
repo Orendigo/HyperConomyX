@@ -32,6 +32,7 @@ public class HyperPlayer implements HyperAccount {
 	private String hash;
 	private String salt;
 	private boolean validUUID;
+	private boolean deleted;
 	
 	
 	public HyperPlayer(HyperConomy hc, String player) {
@@ -200,6 +201,8 @@ public class HyperPlayer implements HyperAccount {
 		HashMap<String,String> conditions = new HashMap<String,String>();
 		conditions.put("NAME", name);
 		hc.getSQLWrite().performDelete("hyperconomy_players", conditions);
+		deleted = true;
+		hc.getHyperEventHandler().fireEvent(new HyperPlayerModificationEvent(this));
 	}
 	
 	public void setName(String name) {
@@ -532,6 +535,9 @@ public class HyperPlayer implements HyperAccount {
 		return hc.getMC().isOnline(this);
 	}
 
+	public boolean deleted() {
+		return deleted;
+	}
 
 	@Override
 	public int hashCode() {
