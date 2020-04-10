@@ -15,12 +15,6 @@ import regalowl.hyperconomy.tradeobject.TradeObject;
 import regalowl.hyperconomy.tradeobject.TradeObjectType;
 
 
-/**
- * 
- * 
- * This class stores item price history in history.yml  (Value/Purchase price.)
- * 
- */
 public class History {
 	
 	private HyperConomy hc;
@@ -39,7 +33,6 @@ public class History {
 	private boolean timeCounterAdded;
 	
 	private final int millisecondsInHour = 3600000;
-	//private final int millisecondsInHour = 600;
 	
 	public History(HyperConomy hc) {
 		this.hc = hc;
@@ -173,6 +166,7 @@ public class History {
 	 * @param economy
 	 * @return The percentage change in theoretical price for the given object and timevalue in hours
 	 */
+	
 	public synchronized HashMap<TradeObject, String> getPercentChangeAsString(String economy, int timevalue) {
 		if (sr == null) return null;
 		HashMap<TradeObject, ArrayList<Double>> allValues = new HashMap<TradeObject, ArrayList<Double>>();
@@ -200,13 +194,7 @@ public class History {
 				if (historicValues.size() >= timevalue) {
 					double historicValue = historicValues.get(timevalue - 1);
 					double currentvalue = 0.0;
-					if (ho.getType() == TradeObjectType.ENCHANTMENT) {
-						currentvalue = ho.getSellPrice(EnchantmentClass.DIAMOND);
-					} else if (ho.getType() == TradeObjectType.ITEM) {
-						currentvalue = ho.getBuyPrice(1);
-					} else {
-						currentvalue = ho.getBuyPrice(1);
-					}
+					currentvalue = ho.getBuyPrice(1);
 					if (historicValue == 0.0) {
 						relevantValues.put(ho, "?");
 						continue;
@@ -252,13 +240,7 @@ public class History {
 				if (historicValues.size() >= timevalue) {
 					double historicValue = historicValues.get(timevalue - 1);
 					double currentvalue = 0.0;
-					if (ho.getType() == TradeObjectType.ENCHANTMENT) {
-						currentvalue = ho.getSellPrice(EnchantmentClass.DIAMOND);
-					} else if (ho.getType() == TradeObjectType.ITEM) {
-						currentvalue = ho.getBuyPrice(1);
-					} else {
-						currentvalue = ho.getBuyPrice(1);
-					}
+					currentvalue = ho.getBuyPrice(1);
 					if (historicValue == 0.0) {
 						relevantValues.put(ho, 0.0);
 						continue;
