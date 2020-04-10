@@ -8,8 +8,8 @@ import regalowl.hyperconomy.minecraft.HSign;
 import regalowl.hyperconomy.util.LanguageFile;
 
 public class AccountInfoSign extends InfoSign {
-    HyperAccount account;
-    LanguageFile L;
+    private HyperAccount account;
+    private LanguageFile L;
     
     public AccountInfoSign(HyperConomy hc, HLocation loc, String economy, String type, String[] parameters) {
         super(hc,loc,economy,type,parameters);

@@ -137,6 +137,8 @@ public class InfoSignHandler implements HyperEventListener {
 							case ACCOUNT:
 								is = AccountInfoSign.fromHSign(hc, s.getLocation(), economy, s);
 								break;
+							case NONE:
+								is = null;
 							default:
 								is = null;
 						}
