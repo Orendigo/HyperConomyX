@@ -10,6 +10,9 @@ import java.util.List;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+
 import regalowl.hyperconomy.HyperConomy;
 import regalowl.hyperconomy.account.HyperAccount;
 import regalowl.hyperconomy.account.HyperPlayer;
@@ -393,7 +396,7 @@ public class ChestShop {
 	
 	
 	private HItemStack getBlockedSlot() {
-		HItemStack blockedSlot = hc.getDataManager().getDefaultEconomy().getTradeObject("black_stained_glass_pane").getItem();
+		HItemStack blockedSlot = hc.getMC().getBukkitCommon().getSerializableItemStack(new ItemStack(Material.BLACK_STAINED_GLASS_PANE));
 		blockedSlot.getItemMeta().setDisplayName(" ");
 		return blockedSlot;
 	}
@@ -419,11 +422,11 @@ public class ChestShop {
 		HItemStack blockedSlot = getBlockedSlot();
 		if (inDeleteMode) {
 			shopMenuInventory = generateBlockedInventory();
-			HItemStack bookStack = hc.getDataManager().getDefaultEconomy().getTradeObject("red_banner").getItem();
+			HItemStack bookStack = hc.getMC().getBukkitCommon().getSerializableItemStack(new ItemStack(Material.RED_BANNER));
 			bookStack.getItemMeta().setDisplayName(hc.getMC().applyColor("&eExit Delete Mode"));
 			shopMenuInventory.setItem(35, bookStack, false);
 			
-			HItemStack deleteStack = hc.getDataManager().getDefaultEconomy().getTradeObject("barrier").getItem();
+			HItemStack deleteStack = hc.getMC().getBukkitCommon().getSerializableItemStack(new ItemStack(Material.BARRIER));
 			deleteStack.getItemMeta().setDisplayName(hc.getMC().applyColor("&eConfirm Delete"));
 			deleteStack.getItemMeta().addLore(hc.getMC().applyColor("&9All custom pricing will be lost."));
 			deleteStack.getItemMeta().addLore(hc.getMC().applyColor("&9All of your items will remain."));
@@ -434,11 +437,11 @@ public class ChestShop {
 			for (int i = 0; i < 9; i++) {
 				shopMenuInventory.addItem(blockedSlot);
 			}
-			HItemStack bookStack = hc.getDataManager().getDefaultEconomy().getTradeObject("red_banner").getItem();
+			HItemStack bookStack = hc.getMC().getBukkitCommon().getSerializableItemStack(new ItemStack(Material.RED_BANNER));
 			bookStack.getItemMeta().setDisplayName(hc.getMC().applyColor("&eExit Preview Mode"));
 			shopMenuInventory.setItem(35, bookStack, false);
 			
-			HItemStack paperStack = hc.getDataManager().getDefaultEconomy().getTradeObject("paper").getItem();
+			HItemStack paperStack = hc.getMC().getBukkitCommon().getSerializableItemStack(new ItemStack(Material.PAPER));
 			paperStack.getItemMeta().setDisplayName(hc.getMC().applyColor("&eNotice"));
 			paperStack.getItemMeta().addLore(hc.getMC().applyColor("&9Other players will not see"));
 			paperStack.getItemMeta().addLore(hc.getMC().applyColor("&9the bottom menu row with"));
@@ -456,13 +459,13 @@ public class ChestShop {
 				his.getItemMeta().addLore(hc.getMC().applyColor("&eSelect Item"));
 				his.getItemMeta().addLore(hc.getMC().applyColor("&9Click to select this item."));
 			}
-			HItemStack bookStack = hc.getDataManager().getDefaultEconomy().getTradeObject("red_banner").getItem();
+			HItemStack bookStack = hc.getMC().getBukkitCommon().getSerializableItemStack(new ItemStack(Material.RED_BANNER));
 			bookStack.getItemMeta().setDisplayName(hc.getMC().applyColor("&eExit"));
 			bookStack.getItemMeta().addLore(hc.getMC().applyColor("&9Click on an item to select it,"));
 			bookStack.getItemMeta().addLore(hc.getMC().applyColor("&9or click here to exit item"));
 			bookStack.getItemMeta().addLore(hc.getMC().applyColor("&9selection."));
 			shopMenuInventory.setItem(35, bookStack, false);
-			HItemStack selectAllStack = hc.getDataManager().getDefaultEconomy().getTradeObject("redstoneblock").getItem();
+			HItemStack selectAllStack = hc.getMC().getBukkitCommon().getSerializableItemStack(new ItemStack(Material.REDSTONE_BLOCK));
 			selectAllStack.getItemMeta().setDisplayName(hc.getMC().applyColor("&eSelect All"));
 			selectAllStack.getItemMeta().addLore(hc.getMC().applyColor("&9Click here to select all"));
 			selectAllStack.getItemMeta().addLore(hc.getMC().applyColor("&9items.  This allows you to"));
@@ -498,11 +501,11 @@ public class ChestShop {
 			
 			
 			
-			HItemStack bookStack = hc.getDataManager().getDefaultEconomy().getTradeObject("red_banner").getItem();
+			HItemStack bookStack = hc.getMC().getBukkitCommon().getSerializableItemStack(new ItemStack(Material.RED_BANNER));
 			bookStack.getItemMeta().setDisplayName(hc.getMC().applyColor("&eExit Edit Mode"));
 			shopMenuInventory.setItem(35, bookStack, false);
 			
-			HItemStack tradeMode = hc.getDataManager().getDefaultEconomy().getTradeObject("clock").getItem();
+			HItemStack tradeMode = hc.getMC().getBukkitCommon().getSerializableItemStack(new ItemStack(Material.CLOCK));
 			tradeMode.getItemMeta().setDisplayName(hc.getMC().applyColor("&eToggle Trade Mode"));
 			tradeMode.getItemMeta().addLore(hc.getMC().applyColor("&9Click here to toggle the trade mode."));
 			tradeMode.getItemMeta().addLore(hc.getMC().applyColor("&9Currently this item can be:"));
@@ -517,7 +520,7 @@ public class ChestShop {
 			shopMenuInventory.setItem(34, tradeMode, false);
 			
 			
-			HItemStack priceMode = hc.getDataManager().getDefaultEconomy().getTradeObject("compass").getItem();
+			HItemStack priceMode = hc.getMC().getBukkitCommon().getSerializableItemStack(new ItemStack(Material.COMPASS));
 			priceMode.getItemMeta().setDisplayName(hc.getMC().applyColor("&eToggle Price Edit Mode"));
 			priceMode.getItemMeta().addLore(hc.getMC().applyColor("&9Click here to toggle the price edit mode."));
 			priceMode.getItemMeta().addLore(hc.getMC().applyColor("&9You're curently editing the:"));
@@ -532,11 +535,11 @@ public class ChestShop {
 			
 			
 			
-			HItemStack decreaseIncrement = hc.getDataManager().getDefaultEconomy().getTradeObject("red_stained_glass_pane").getItem();
+			HItemStack decreaseIncrement = hc.getMC().getBukkitCommon().getSerializableItemStack(new ItemStack(Material.RED_STAINED_GLASS_PANE));
 			decreaseIncrement.getItemMeta().setDisplayName(hc.getMC().applyColor("&eDecrease Price Change Increment"));
 			decreaseIncrement.getItemMeta().addLore(hc.getMC().applyColor("&9Current Increment: " + "&a" + hc.getLanguageFile().formatMoney(getFractionalPriceIncrement())));
 			shopMenuInventory.setItem(32, decreaseIncrement, false);
-			HItemStack increaseIncrement = hc.getDataManager().getDefaultEconomy().getTradeObject("lime_stained_glass_pane").getItem();
+			HItemStack increaseIncrement = hc.getMC().getBukkitCommon().getSerializableItemStack(new ItemStack(Material.LIME_STAINED_GLASS_PANE));
 			increaseIncrement.getItemMeta().setDisplayName(hc.getMC().applyColor("&eIncrease Price Change Increment"));
 			increaseIncrement.getItemMeta().addLore(hc.getMC().applyColor("&9Current Increment: " + "&a" + hc.getLanguageFile().formatMoney(getFractionalPriceIncrement())));
 			shopMenuInventory.setItem(31, increaseIncrement, false);
@@ -544,7 +547,7 @@ public class ChestShop {
 			
 			
 			
-			HItemStack decreasePrice = hc.getDataManager().getDefaultEconomy().getTradeObject("red_stained_glass_pane").getItem();
+			HItemStack decreasePrice = hc.getMC().getBukkitCommon().getSerializableItemStack(new ItemStack(Material.RED_STAINED_GLASS_PANE));
 			decreasePrice.getItemMeta().setDisplayName(hc.getMC().applyColor("&eDecrease Price"));
 			if (isBuyStack(editStack)) {
 				decreasePrice.getItemMeta().addLore(hc.getMC().applyColor("&9Current Buy From Chest Price: "));
@@ -555,7 +558,7 @@ public class ChestShop {
 				decreasePrice.getItemMeta().addLore(hc.getMC().applyColor("&a" + hc.getLanguageFile().formatMoney(getSellPrice(editStack))));
 			}
 			shopMenuInventory.setItem(30, decreasePrice, false);
-			HItemStack increasePrice = hc.getDataManager().getDefaultEconomy().getTradeObject("lime_stained_glass_pane").getItem();
+			HItemStack increasePrice = hc.getMC().getBukkitCommon().getSerializableItemStack(new ItemStack(Material.LIME_STAINED_GLASS_PANE));
 			increasePrice.getItemMeta().setDisplayName(hc.getMC().applyColor("&eIncrease Price"));
 			if (isBuyStack(editStack)) {
 				increasePrice.getItemMeta().addLore(hc.getMC().applyColor("&9Current Buy From Chest Price: "));
@@ -576,19 +579,19 @@ public class ChestShop {
 			for (int i = 0; i < 9; i++) {
 				shopMenuInventory.addItem(blockedSlot);
 			}
-			HItemStack bookStack = hc.getDataManager().getDefaultEconomy().getTradeObject("nether_star").getItem();
+			HItemStack bookStack = hc.getMC().getBukkitCommon().getSerializableItemStack(new ItemStack(Material.NETHER_STAR));
 			bookStack.getItemMeta().setDisplayName(hc.getMC().applyColor("&eConfigure Items"));
 			bookStack.getItemMeta().addLore(hc.getMC().applyColor("&9Click here and then click"));
 			bookStack.getItemMeta().addLore(hc.getMC().applyColor("&9the item you wish to edit."));
 			shopMenuInventory.setItem(35, bookStack, false);
 			
-			HItemStack previewStack = hc.getDataManager().getDefaultEconomy().getTradeObject("end_crystal").getItem();
+			HItemStack previewStack = hc.getMC().getBukkitCommon().getSerializableItemStack(new ItemStack(Material.END_CRYSTAL));
 			previewStack.getItemMeta().setDisplayName(hc.getMC().applyColor("&ePreview Shop"));
 			previewStack.getItemMeta().addLore(hc.getMC().applyColor("&9Click here to see what your shop"));
 			previewStack.getItemMeta().addLore(hc.getMC().applyColor("&9will look like to other players."));
 			shopMenuInventory.setItem(34, previewStack, false);
 			
-			HItemStack deleteStack = hc.getDataManager().getDefaultEconomy().getTradeObject("barrier").getItem();
+			HItemStack deleteStack = hc.getMC().getBukkitCommon().getSerializableItemStack(new ItemStack(Material.BARRIER));
 			deleteStack.getItemMeta().setDisplayName(hc.getMC().applyColor("&eDelete Shop"));
 			deleteStack.getItemMeta().addLore(hc.getMC().applyColor("&9Click here to convert your shop"));
 			deleteStack.getItemMeta().addLore(hc.getMC().applyColor("&9back into a regular chest."));

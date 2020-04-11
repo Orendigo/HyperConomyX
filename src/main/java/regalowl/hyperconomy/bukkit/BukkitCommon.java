@@ -387,8 +387,11 @@ public class BukkitCommon {
 	public HItemStack getSerializableItemStack(ItemStack s) {
 		if (s == null) return hc.getBlankStack();
 		boolean isBlank = (s.getType() == Material.AIR) ? true:false;
-        String material = s.getType().toString();
-        short durability = (short)((Damageable) s.getItemMeta()).getDamage();
+		String material = s.getType().toString();
+		short durability = 0;
+		if(s.getItemMeta() instanceof Damageable) {
+			durability = (short)((Damageable) s.getItemMeta()).getDamage();
+		}
         byte data = 0; 
         int amount = s.getAmount();
         int maxStackSize = s.getType().getMaxStackSize();
