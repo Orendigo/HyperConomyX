@@ -693,7 +693,10 @@ public class ChestShopHandler implements HyperEventListener {
 		}
 		return playerChestShops;
 	}
-	
+
+	public ArrayList<ChestShop> getChestShops() {
+		return new ArrayList<ChestShop>(chestShops.values());
+	}
 	
 	
 	public void deleteChestShop(ChestShop cs) {
