@@ -18,6 +18,7 @@ import regalowl.hyperconomy.event.HyperPlayerModificationEvent;
 import regalowl.hyperconomy.event.TradeObjectModificationEvent;
 import regalowl.hyperconomy.event.TradeObjectModificationType;
 import regalowl.hyperconomy.event.minecraft.HBlockBreakEvent;
+import regalowl.hyperconomy.event.minecraft.HPlayerItemHeldEvent;
 import regalowl.hyperconomy.event.minecraft.HSignChangeEvent;
 import regalowl.hyperconomy.minecraft.HLocation;
 import regalowl.hyperconomy.minecraft.HSign;
@@ -26,6 +27,7 @@ public class InfoSignHandler implements HyperEventListener {
 
 	private HyperConomy hc;
 	private CopyOnWriteArrayList<InfoSign> infoSigns = new CopyOnWriteArrayList<InfoSign>();
+	private ArrayList<HLocation> signLocations = new ArrayList<HLocation>();
 	private AtomicInteger signCounter = new AtomicInteger();
 	private AtomicBoolean updateActive = new AtomicBoolean();
 	private AtomicBoolean repeatUpdate = new AtomicBoolean();
@@ -55,23 +57,14 @@ public class InfoSignHandler implements HyperEventListener {
 					public void run() {
 						while (dbData.next()) {
 							HLocation l = new HLocation(dbData.getString("WORLD"), dbData.getInt("X"),dbData.getInt("Y"),dbData.getInt("Z"));
-							InfoSign is = null;
 							String parameters[] = {dbData.getString("PARAMETER1"), dbData.getString("PARAMETER2"), dbData.getString("PARAMETER3")};
-							SignObject object = SignObject.fromString(dbData.getString("TYPE"));
-							switch(object) {
-								case TRADEOBJECT:
-									is = new TradeObjectInfoSign(hc, l, dbData.getString("ECONOMY"), dbData.getString("TYPE"), parameters);
-									break;
-								case ACCOUNT:
-									is = new AccountInfoSign(hc, l, dbData.getString("ECONOMY"), dbData.getString("TYPE"), parameters);
-									break;
-								default:
-									is = null;
-							}
-							if(is.isValid()) 
+							InfoSign is = getInfoSignFromData(hc, l, dbData.getString("ECONOMY"), dbData.getString("TYPE"), parameters);
+							if(is.isValid()) {
 								infoSigns.add(is);
-							else
+								signLocations.add(is.getLocation());
+							} else {
 								removeSign(is);
+							}
 						}
 						dbData.close();
 						dbData = null;
@@ -117,6 +110,39 @@ public class InfoSignHandler implements HyperEventListener {
 						if(((AccountInfoSign)is).getAccount().getName().equals(hevent.getHyperPlayer().getName()))
 							removeSign(is);			
 			updateSigns();
+		} else if (event instanceof HPlayerItemHeldEvent) {
+			HPlayerItemHeldEvent hevent = (HPlayerItemHeldEvent)event;
+			try {
+				HyperPlayer hp = hevent.getHyperPlayer();
+				if (hc.getHyperLock().loadLock()) return;
+				HLocation target = hp.getTargetLocation();
+				InteractiveInfoSign iis = null;
+				if(isInfoSign(target)) {
+					for(InfoSign is : infoSigns) {
+						if(is instanceof InteractiveInfoSign &&  is.getLocation().equals(target)) {
+							iis = (InteractiveInfoSign)is;
+							break;
+						}
+					}
+					int ps = hevent.getPreviousSlot();
+					int ns = hevent.getNewSlot();
+					int change = 0;
+					if(ns == 0 && ps == 8)
+						change = 1;
+					else if(ns == 8 && ps == 0)
+						change = -1;
+					else if(ns > ps)
+						change = 1;
+					else if(ns < ps)
+						change = -1;
+					if(change > 0)
+						iis.incrementIndex(change);
+					else if(change < 0)
+						iis.decrementIndex(change*-1);
+				}
+			} catch (Exception e) {
+				hc.gSDL().getErrorWriter().writeError(e);
+			}
 		} else if (event instanceof HSignChangeEvent) {
 			HSignChangeEvent hevent = (HSignChangeEvent)event;
 			try {
@@ -127,36 +153,23 @@ public class InfoSignHandler implements HyperEventListener {
 					if (hp != null && hp.getEconomy() != null) {
 						economy = hp.getEconomy();
 					}
-					SignObject object = SignObject.fromString(s.getLine(2));
-					InfoSign is;
-					if (object != null) {
-						switch(object) {
-							case TRADEOBJECT:
-								is = TradeObjectInfoSign.fromHSign(hc, s.getLocation(), economy, s);
-								break;
-							case ACCOUNT:
-								is = AccountInfoSign.fromHSign(hc, s.getLocation(), economy, s);
-								break;
-							case NONE:
-								is = null;
-							default:
-								is = null;
-						}
-						if(is.isValid()) {
-							infoSigns.add(is);
-							HashMap<String,String> values = new HashMap<String,String>();
-							values.put("WORLD", is.getLocation().getWorld());
-							values.put("X", is.getLocation().getBlockX()+"");
-							values.put("Y", is.getLocation().getBlockY()+"");
-							values.put("Z", is.getLocation().getBlockZ()+"");
-							values.put("TYPE", is.getType());
-							values.put("PARAMETER1", (is.getParameter(0) == null) ? "" : is.getParameter(0));
-							values.put("PARAMETER2", (is.getParameter(1) == null) ? "" : is.getParameter(1));
-							values.put("PARAMETER3", (is.getParameter(2) == null) ? "" : is.getParameter(2));
-							values.put("ECONOMY", is.getEconomy());
-							hc.getSQLWrite().performInsert("hyperconomy_info_signs", values);
-							updateSigns();
-						}
+					String parameters[] = {s.getLine(1), s.getLine(2), s.getLine(3)};
+					InfoSign is = getInfoSignFromData(hc, s.getLocation(), economy, s.getLine(0), parameters);
+					if(is != null && is.isValid()) {
+						infoSigns.add(is);
+						signLocations.add(is.getLocation());
+						HashMap<String,String> values = new HashMap<String,String>();
+						values.put("WORLD", is.getLocation().getWorld());
+						values.put("X", is.getLocation().getBlockX()+"");
+						values.put("Y", is.getLocation().getBlockY()+"");
+						values.put("Z", is.getLocation().getBlockZ()+"");
+						values.put("TYPE", is.getType());
+						values.put("PARAMETER1", (is.getParameter(0) == null) ? "" : is.getParameter(0));
+						values.put("PARAMETER2", (is.getParameter(1) == null) ? "" : is.getParameter(1));
+						values.put("PARAMETER3", (is.getParameter(2) == null) ? "" : is.getParameter(2));
+						values.put("ECONOMY", is.getEconomy());
+						hc.getSQLWrite().performInsert("hyperconomy_info_signs", values);
+						updateSigns();
 					}
 				}
 			} catch (Exception e) {
@@ -164,11 +177,27 @@ public class InfoSignHandler implements HyperEventListener {
 			}
 		}
 	}
+
+	private InfoSign getInfoSignFromData(HyperConomy hc, HLocation loc, String economy, String type, String[] parameters) {
+		SignObject object = SignObject.fromString(type);
+		switch(object) {
+			case TRADEOBJECT:
+				return new TradeObjectInfoSign(hc, loc, economy, type, parameters);
+			case ACCOUNT:
+				return new AccountInfoSign(hc, loc, economy, type, parameters);
+			case TRADEOBJECTLIST:
+				return new TradeObjectListInfoSign(hc, loc, economy, type, parameters);
+			default:
+				return null;
+		}
+		
+	}
 	
 	public void removeSign(InfoSign is) {
 		is.disableSign();
 		infoSigns.remove(is);
 		HLocation loc = is.getLocation();
+		signLocations.remove(loc);
 		HashMap<String,String> conditions = new HashMap<String,String>();
 		conditions.put("WORLD", loc.getWorld());
 		conditions.put("X", loc.getBlockX()+"");
@@ -186,6 +215,10 @@ public class InfoSignHandler implements HyperEventListener {
 		}
 		updateActive.set(true);
 		new SignUpdater();
+	}
+
+	public boolean isInfoSign(HLocation hloc) {
+		return signLocations.contains(hloc);
 	}
 	
 	private class SignUpdater {

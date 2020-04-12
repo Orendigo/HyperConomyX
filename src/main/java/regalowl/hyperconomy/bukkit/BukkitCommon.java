@@ -131,13 +131,10 @@ public class BukkitCommon {
 	}
 
 	protected boolean isInfoSign(HLocation l) {
-		Block b = getBlock(l);
-		if (b != null && b.getType().toString().contains("SIGN")) {
-			Sign s = (Sign) b.getState();
-			String type = ChatColor.stripColor(s.getLine(2)).trim().replace(":", "").replace(" ", "");
-			if (SignObject.isSignType(type)) return true;
-		}
-		return false;
+		if (hc.getInfoSignHandler().isInfoSign(l))
+			return true;
+		else
+			return false;
 	}
 	
 	protected boolean isChestShopChest(HLocation l) {

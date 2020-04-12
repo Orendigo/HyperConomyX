@@ -21,22 +21,12 @@ public class TradeObjectInfoSign extends InfoSign {
 
     private int timeValueHours;
 	private int timeValue;
-	private String increment;
+	private String timeIncrement;
     
     public TradeObjectInfoSign(HyperConomy hc, HLocation loc, String economy, String type, String[] parameters) {
         super(hc,loc,economy,type,parameters);
         L = hc.getLanguageFile();
-        to = hc.getDataManager().getEconomy(economy).getTradeObject(parameters[0]);
-        try {
-            multiplier = Integer.parseInt(parameters[2]);
-        } catch(Exception e) {
-            multiplier = 1;
-        }
-        if (EnchantmentClass.fromString(parameters[2]) != null) {
-            enchantClass = EnchantmentClass.fromString(parameters[2]);
-        } else {
-            enchantClass = EnchantmentClass.DIAMOND;
-        }
+        to = hc.getDataManager().getEconomy(economy).getTradeObject(parameters[0]+parameters[1]);
         HSign s = getSign();
         if(s == null || to == null) {
             valid = false;
@@ -44,8 +34,54 @@ public class TradeObjectInfoSign extends InfoSign {
         } else {
             valid = true;
         }
-        lines[0] = hc.getMC().removeColor(s.getLine(0).trim());
-		lines[1] = hc.getMC().removeColor(s.getLine(1).trim());
+        if(type.equals("CHANGE")) {
+            try {
+                timeIncrement = parameters[1].substring(parameters[1].length()-1).toUpperCase();
+                timeValue = Integer.parseInt(parameters[1].substring(0,parameters[1].length()-1));
+                timeValueHours = timeValue;
+                if (timeIncrement.equals("H")) {
+                    timeValueHours *= 1;
+                } else if (timeIncrement.equals("D")) {
+                    timeValueHours *= 24;
+                } else if (timeIncrement.equals("W")) {
+                    timeValueHours *= 168;
+                } else if (timeIncrement.equals("M")) {
+                    timeValueHours *= 672;
+                } else {
+                    timeIncrement = "D";
+                    timeValue = 1;
+                    timeValueHours = 24;
+                }
+            } catch (Exception e) {
+                timeIncrement = "D";
+                timeValue = 1;
+                timeValueHours = 24;
+            }
+            parameters[1] = timeValue+timeIncrement;
+        } else if(to.getType() == TradeObjectType.ENCHANTMENT) {
+            enchantClass = EnchantmentClass.fromString(parameters[2]);
+            if(enchantClass == EnchantmentClass.NONE) {
+                if(hc.getConf().getBoolean("shop.enchant-books-only"))
+                    enchantClass = EnchantmentClass.BOOK;
+                else
+                    enchantClass = EnchantmentClass.DIAMOND;
+            }
+            parameters[2] = enchantClass.name();
+        } else {
+            try {
+                multiplier = Integer.parseInt(parameters[2]);
+            } catch(Exception e) {
+                multiplier = 1;
+            }
+            parameters[2] = multiplier+"";
+        }
+        parameters[0] = to.getName();
+        if(to.getType() == TradeObjectType.ENCHANTMENT)
+            parameters[2] = enchantClass.name();
+        else
+            parameters[2] = multiplier+"";
+        lines[0] = hc.getMC().removeColor(s.getLine(1).trim());
+		lines[1] = hc.getMC().removeColor(s.getLine(2).trim());
         if (lines[0].length() > 13) {
 			lines[1] = "&1" + lines[0].substring(13, lines[0].length()) + lines[1];
 			lines[0] = "&1" + lines[0].substring(0, 13);
@@ -53,13 +89,6 @@ public class TradeObjectInfoSign extends InfoSign {
 			lines[0] = "&1" + lines[0];
 			lines[1] = "&1" + lines[1];
 		}
-    }
-
-    public static TradeObjectInfoSign fromHSign(HyperConomy hc, HLocation loc, String economy, HSign sign) {
-        String[] parameters = new String[3];
-        parameters[0] = sign.getLine(0)+sign.getLine(1);
-        parameters[2] = sign.getLine(3);
-        return new TradeObjectInfoSign(hc, loc, economy, sign.getLine(2), parameters);
     }
     
     @Override
@@ -144,7 +173,7 @@ public class TradeObjectInfoSign extends InfoSign {
                     double price = to.getBuyPrice(enchantClass);
                     double taxpaid = CommonFunctions.twoDecimals(to.getPurchaseTax(price) * multiplier);
                     lines[2] = "&f" + "Tax:";
-                    lines[3] = "&a" + "" + L.formatMoney(taxpaid);
+                    lines[3] = "&a" + L.formatMoney(taxpaid);
                 } else if (to.getType() == TradeObjectType.ITEM) {
                     lines[2] = "&f" + "Tax:";
                     lines[3] = "&a" + L.formatMoney(CommonFunctions.twoDecimals(to.getPurchaseTax(to.getBuyPrice(1) * multiplier)));
@@ -172,15 +201,7 @@ public class TradeObjectInfoSign extends InfoSign {
                 }
                 updateHSign();
                 break;
-            case "HISTORY":
-                String timeIncrement = parameters[2];
-                if (timeIncrement.contains("(")) timeIncrement = timeIncrement.substring(0, timeIncrement.indexOf("("));
-					timeIncrement = timeIncrement.toUpperCase().replaceAll("[^A-Z]", "");
-                String timeValueString = parameters[2];
-                if (timeValueString.contains("(")) timeValueString = timeValueString.substring(0, timeValueString.indexOf("("));
-					timeValueString = timeValueString.toUpperCase().replaceAll("[^0-9]", "");
-                int timeValue = Integer.parseInt(timeValueString);
-                int timeValueHours = timeValue;
+            case "CHANGE":
                 if (timeIncrement.equals("H")) {
                     timeValueHours *= 1;
                 } else if (timeIncrement.equals("D")) {
@@ -190,22 +211,28 @@ public class TradeObjectInfoSign extends InfoSign {
                 } else if (timeIncrement.equals("M")) {
                     timeValueHours *= 672;
                 }
-                updateHistorySign(timeValueHours, timeValue, timeIncrement);
+                updateHistorySign();
                 break;
         }
     }
 
-    private void updateHistorySign(int timevalueHours, int timevalue, String inc) {
+    private void updateHistorySign() {
 		try {
-			this.timeValueHours = timevalueHours;
-			this.timeValue = timevalue;
-			this.increment = inc;
 			new Thread(new Runnable() {
 				public void run() {
 					String percentchange = hc.getHistory().getPercentChange(to, timeValueHours);
-					String colorcode = getcolorCode(percentchange);
-					lines[2] = "&f" + "History:";
-					lines[3] = "&f" + "" + timeValue + increment.toLowerCase() + colorcode + "(" + percentchange + ")";
+                    lines[2] = "&f" + "Change:";
+                    if(percentchange.equalsIgnoreCase("?")) {
+                        lines[3] = "&f" + "" + timeValue + timeIncrement.toLowerCase() + "&1(" + percentchange + "%)";
+                    } else {
+                        Double percentc = Double.parseDouble(percentchange);
+                        if(percentc < 0.0)
+                            lines[3] = "&f" + timeValue + timeIncrement.toLowerCase() + "&c(" + percentchange + "%)";
+                        else if (percentc > 0)
+                            lines[3] = "&f" + timeValue + timeIncrement.toLowerCase() + "&a(+" + percentchange + "%)";
+                        else
+                            lines[3] = "&f" + timeValue + timeIncrement.toLowerCase() + "&1(" + percentchange + "%)";
+                    }
 					if (lines[2].length() > 14) {
 						lines[2] = lines[2].substring(0, 13) + ")";
 					}
@@ -226,22 +253,6 @@ public class TradeObjectInfoSign extends InfoSign {
 		} catch (Exception e) {
 			hc.gSDL().getErrorWriter().writeError(e);
 		}
-	}
-	
-
-	private String getcolorCode(String percentchange) {
-		String colorcode = "&1";
-		if (percentchange.equalsIgnoreCase("?")) {
-			colorcode = "&1";
-		} else {
-			Double percentc = Double.parseDouble(percentchange);
-			if (percentc > 0) {
-				colorcode = "&a";
-			} else if (percentc < 0) {
-				colorcode = "&4";
-			}
-		}
-		return colorcode;
 	}
 
     public TradeObject getTradeObject() {

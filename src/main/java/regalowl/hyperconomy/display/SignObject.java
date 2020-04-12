@@ -10,11 +10,11 @@ public enum SignObject {
 		type = type.toUpperCase();
 		if (type == null) {
 			return null;
-		} else if ("BUY,SELL,STOCK,TOTALSTOCK,VALUE,STATUS,STATICPRICE,STARTPRICE,MEDIAN,HISTORY,PRODUCTTAX,SB".contains(type)) {
+		} else if ("BUY,SELL,STOCK,TOTALSTOCK,VALUE,STATUS,STATICPRICE,STARTPRICE,MEDIAN,CHANGE,PRODUCTTAX,SB".contains(type)) {
 			return SignObject.TRADEOBJECT;
 		} else if ("BALANCE".contains(type)) {
 			return SignObject.ACCOUNT;
-		} else if ("TOPSTOCK,TOPCHANGES".contains(type)) {
+		} else if ("TOPSTOCK,TOPTOTALSTOCK,TOPVALUE,TOPBUY,TOPSELL,TOPPRODUCTTAX,TOPMEDIAN,TOPSTATICPRICE,TOPSTARTPRICE,TOPCHANGE".contains(type)) {
 			return SignObject.TRADEOBJECTLIST;
 		} else if ("TOPBALANCE".contains(type)) {
 			return SignObject.ACCOUNTLIST;
@@ -23,12 +23,5 @@ public enum SignObject {
 		} else {
 			return SignObject.NONE;
 		}
-	}
-	
-	public static boolean isSignType(String type) {
-		SignObject t = fromString(type);
-		if (t == SignObject.NONE) return false;
-		if (type.toUpperCase().equalsIgnoreCase(t.toString())) return true;
-		return false;
 	}
 }

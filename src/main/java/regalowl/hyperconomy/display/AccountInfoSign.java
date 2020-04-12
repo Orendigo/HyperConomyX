@@ -14,7 +14,7 @@ public class AccountInfoSign extends InfoSign {
     public AccountInfoSign(HyperConomy hc, HLocation loc, String economy, String type, String[] parameters) {
         super(hc,loc,economy,type,parameters);
         L = hc.getLanguageFile();
-        account = hc.getDataManager().getAccount(parameters[0]);
+        account = hc.getDataManager().getAccount(parameters[0]+parameters[1]);
         HSign s = getSign();
         if(s == null || account == null) {
             valid = false;
@@ -22,6 +22,7 @@ public class AccountInfoSign extends InfoSign {
         } else {
             valid = true;
         }
+        parameters[0] = account.getName();
         lines[0] = hc.getMC().removeColor(s.getLine(0).trim());
 		lines[1] = hc.getMC().removeColor(s.getLine(1).trim());
         if (lines[0].length() > 13) {
@@ -31,13 +32,6 @@ public class AccountInfoSign extends InfoSign {
 			lines[0] = "&1" + lines[0];
 			lines[1] = "&1" + lines[1];
 		}
-    }
-
-    public static AccountInfoSign fromHSign(HyperConomy hc, HLocation loc, String economy, HSign sign) {
-        String[] parameters = new String[3];
-        parameters[0] = sign.getLine(0)+sign.getLine(1);
-        parameters[2] = sign.getLine(3);
-        return new AccountInfoSign(hc, loc, economy, sign.getLine(2), parameters);
     }
     
     @Override
