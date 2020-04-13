@@ -329,6 +329,12 @@ public class DatabaseUpdater {
 		f = t.addField("ECONOMY", FieldType.TINYTEXT);
 		f = t.addField("TIME", FieldType.DATETIME);
 		f = t.addField("PRICE", FieldType.DOUBLE);
+
+		t = hc.getSQLManager().addTable("hyperconomy_history_accounts");
+		f = t.addField("ID", FieldType.INTEGER);f.setNotNull();f.setPrimaryKey();f.setAutoIncrement();
+		f = t.addField("ACCOUNT", FieldType.TINYTEXT);
+		f = t.addField("TIME", FieldType.DATETIME);
+		f = t.addField("BALANCE", FieldType.DOUBLE);
 		
 
 		t = hc.getSQLManager().addTable("hyperconomy_audit_log");

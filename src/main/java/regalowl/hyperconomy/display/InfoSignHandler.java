@@ -124,21 +124,23 @@ public class InfoSignHandler implements HyperEventListener {
 							break;
 						}
 					}
-					int ps = hevent.getPreviousSlot();
-					int ns = hevent.getNewSlot();
-					int change = 0;
-					if(ns == 0 && ps == 8)
-						change = 1;
-					else if(ns == 8 && ps == 0)
-						change = -1;
-					else if(ns > ps)
-						change = 1;
-					else if(ns < ps)
-						change = -1;
-					if(change > 0)
-						iis.incrementIndex(change);
-					else if(change < 0)
-						iis.decrementIndex(change*-1);
+					if(iis != null) {
+						int ps = hevent.getPreviousSlot();
+						int ns = hevent.getNewSlot();
+						int change = 0;
+						if(ns == 0 && ps == 8)
+							change = 1;
+						else if(ns == 8 && ps == 0)
+							change = -1;
+						else if(ns > ps)
+							change = 1;
+						else if(ns < ps)
+							change = -1;
+						if(change > 0)
+							iis.incrementIndex(change);
+						else if(change < 0)
+							iis.decrementIndex(change*-1);
+					}
 				}
 			} catch (Exception e) {
 				hc.gSDL().getErrorWriter().writeError(e);

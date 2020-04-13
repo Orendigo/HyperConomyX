@@ -131,7 +131,7 @@ public class TradeObjectListInfoSign extends InfoSign implements InteractiveInfo
 
 	public void update() {
         if(type.equals("TOPCHANGE")) {
-            HashMap<TradeObject, Double> allObjects = hc.getHistory().getPercentChange(economy, timeValueHours);
+            HashMap<TradeObject, Double> allObjects = hc.getHistory().getObjectPercentChange(economy, timeValueHours);
             historyDisplayObjects.clear();
             if(!filter.equals("ALL")) {
                 List<TradeObject> keys = new ArrayList<TradeObject>(allObjects.keySet());

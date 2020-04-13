@@ -9,6 +9,7 @@ import regalowl.simpledatalib.sql.SQLRead;
 import regalowl.simpledatalib.sql.SQLWrite;
 import regalowl.hyperconomy.DataManager;
 import regalowl.hyperconomy.HyperConomy;
+import regalowl.hyperconomy.account.HyperAccount;
 import regalowl.hyperconomy.display.InfoSignHandler;
 import regalowl.hyperconomy.tradeobject.EnchantmentClass;
 import regalowl.hyperconomy.tradeobject.TradeObject;
@@ -105,7 +106,10 @@ public class History {
 	
 	private void writeHistoryValues() {
 		ArrayList<TradeObject> objects = em.getTradeObjects();
+		ArrayList<HyperAccount> accounts = em.getAccounts();
 		ArrayList<String> statements = new ArrayList<String>();
+		
+		//Trade Objects
 		for (TradeObject object : objects) {
 			statements.add("INSERT INTO hyperconomy_history (OBJECT, ECONOMY, TIME, PRICE) "
 					+ "VALUES ('"+object.getName()+"','"+object.getEconomy()+"', NOW() ,'"+object.getBuyPrice(1)+"')");
@@ -115,6 +119,18 @@ public class History {
 		} else {
 			statements.add("DELETE FROM hyperconomy_history WHERE TIME < date('now','" + formatSQLiteTime(daysToSaveHistory * -1) + " day')");
 		}
+
+		//Accounts
+		for(HyperAccount account : accounts) {
+			statements.add("INSERT INTO hyperconomy_history_accounts (ACCOUNT, TIME, BALANCE) "
+					+ "VALUES ('"+account.getName()+"', NOW() ,'"+account.getBalance()+"')");
+		
+		}
+		if (hc.getSQLManager().useMySQL()) {
+			statements.add("DELETE FROM hyperconomy_history_accounts WHERE TIME < DATE_SUB(NOW(), INTERVAL " + daysToSaveHistory + " DAY)");
+		} else {
+			statements.add("DELETE FROM hyperconomy_history_accounts WHERE TIME < date('now','" + formatSQLiteTime(daysToSaveHistory * -1) + " day')");
+		}
 		sw.addToQueue(statements);
 	}
 
@@ -123,7 +139,9 @@ public class History {
     	hc.getMC().cancelTask(historylogtaskid);
     }
 
-	public double getHistoricValue(String name, String economy, int count) {
+	//Object Functions
+
+	public double getObjectHistoricValue(String name, String economy, int count) {
 		try {
 			count -= 1;
 			QueryResult result = sr.select("SELECT PRICE FROM hyperconomy_history WHERE OBJECT = '"+name+"' AND ECONOMY = '"+economy+"' ORDER BY TIME DESC LIMIT "+count+",1");
@@ -133,7 +151,7 @@ public class History {
 			result.close();
 			return -1.0;
 		} catch (Exception e) {
-			hc.gSDL().getErrorWriter().writeError(e, "getHistoricValue() passed arguments: name = '" + name + "', economy = '" + economy + "', count = '" + count + "'");
+			hc.gSDL().getErrorWriter().writeError(e, "getObjectHistoricValue() passed arguments: name = '" + name + "', economy = '" + economy + "', count = '" + count + "'");
 			return -1.0;
 		}
 	}
@@ -145,13 +163,13 @@ public class History {
 	 * @return The percentage change in theoretical price for the given object and timevalue in hours
 	 */
     
-	public synchronized String getPercentChange(TradeObject ho, int timevalue) {
+	public synchronized String getObjectPercentChange(TradeObject ho, int timevalue) {
 		if (ho == null || sr == null) {
-			hc.gSDL().getErrorWriter().writeError("getPercentChange passed null HyperObject or SQLRead");
+			hc.gSDL().getErrorWriter().writeError("getObjectPercentChange passed null HyperObject or SQLRead");
 			return "?";
 		}
 		double percentChange = 0.0;
-		double historicvalue = getHistoricValue(ho.getName(), ho.getEconomy(), timevalue);
+		double historicvalue = getObjectHistoricValue(ho.getName(), ho.getEconomy(), timevalue);
 		if (historicvalue == -1.0 || historicvalue == 0.0) return "?";
 		double currentvalue = ho.getBuyPrice(1);
 		percentChange = ((currentvalue - historicvalue) / historicvalue) * 100.0;
@@ -159,7 +177,6 @@ public class History {
 		return percentChange + "";
 	}
 	
-	//TODO improve performance
 	/**
 	 * This function must be called from an asynchronous thread!
 	 * @param timevalue
@@ -167,7 +184,7 @@ public class History {
 	 * @return The percentage change in theoretical price for the given object and timevalue in hours
 	 */
 	
-	public synchronized HashMap<TradeObject, String> getPercentChangeAsString(String economy, int timevalue) {
+	public synchronized HashMap<TradeObject, String> getObjectPercentChangeAsString(String economy, int timevalue) {
 		if (sr == null) return null;
 		HashMap<TradeObject, ArrayList<Double>> allValues = new HashMap<TradeObject, ArrayList<Double>>();
 		QueryResult result = sr.select("SELECT OBJECT, PRICE FROM hyperconomy_history WHERE ECONOMY = '" + economy + "' ORDER BY TIME DESC");
@@ -213,7 +230,7 @@ public class History {
 		return relevantValues;
 	}
 
-	public synchronized HashMap<TradeObject, Double> getPercentChange(String economy, int timevalue) {
+	public synchronized HashMap<TradeObject, Double> getObjectPercentChange(String economy, int timevalue) {
 		if (sr == null) return null;
 		HashMap<TradeObject, ArrayList<Double>> allValues = new HashMap<TradeObject, ArrayList<Double>>();
 		QueryResult result = sr.select("SELECT OBJECT, PRICE FROM hyperconomy_history WHERE ECONOMY = '" + economy + "' ORDER BY TIME DESC");
@@ -253,6 +270,145 @@ public class History {
 				}
 			} else {
 				relevantValues.put(ho, 0.0);
+			}
+		}
+		return relevantValues;
+	}
+
+
+
+
+	//Account Functions
+
+	public double getAccountHistoricValue(String name, int count) {
+		try {
+			count -= 1;
+			QueryResult result = sr.select("SELECT BALANCE FROM hyperconomy_history_accounts WHERE ACCOUNT = '"+name+"' ORDER BY TIME DESC LIMIT "+count+",1");
+			if (result.next()) {
+				return Double.parseDouble(result.getString("BALANCE"));
+			}
+			result.close();
+			return -1.0;
+		} catch (Exception e) {
+			hc.gSDL().getErrorWriter().writeError(e, "getAccountHistoricValue() passed arguments: name = '" + name + "', count = '" + count + "'");
+			return -1.0;
+		}
+	}
+
+	/**
+	 * This function must be called from an asynchronous thread!
+	 * @param ho
+	 * @param timevalue
+	 * @return The percentage change in theoretical price for the given account and timevalue in hours
+	 */
+    
+	public synchronized String getAccountPercentChange(HyperAccount account, int timevalue) {
+		if (account == null || sr == null) {
+			hc.gSDL().getErrorWriter().writeError("getAccountPercentChange passed null HyperObject or SQLRead");
+			return "?";
+		}
+		double percentChange = 0.0;
+		double historicvalue = getAccountHistoricValue(account.getName(), timevalue);
+		if (historicvalue == -1.0 || historicvalue == 0.0) return "?";
+		double currentvalue = account.getBalance();
+		percentChange = ((currentvalue - historicvalue) / historicvalue) * 100.0;
+		percentChange = CommonFunctions.round(percentChange, 3);
+		return percentChange + "";
+	}
+	
+	/**
+	 * This function must be called from an asynchronous thread!
+	 * @param timevalue
+	 * @param economy
+	 * @return The percentage change in theoretical balance for the given account and timevalue in hours
+	 */
+	
+	public synchronized HashMap<HyperAccount, String> getAccountPercentChangeAsString(String economy, int timevalue) {
+		if (sr == null) return null;
+		HashMap<HyperAccount, ArrayList<Double>> allValues = new HashMap<HyperAccount, ArrayList<Double>>();
+		QueryResult result = sr.select("SELECT ACCOUNT, BALANCE FROM hyperconomy_history_accounts ORDER BY TIME DESC");
+		while (result.next()) {
+			HyperAccount account = em.getAccount(result.getString("ACCOUNT"));
+			double balance = result.getDouble("BALANCE");
+			if (!allValues.containsKey(account)) {
+				ArrayList<Double> values = new ArrayList<Double>();
+				values.add(balance);
+				allValues.put(account, values);
+			} else {
+				ArrayList<Double> values = allValues.get(account);
+				values.add(balance);
+				allValues.put(account, values);
+			}
+		}
+		result.close();
+		
+		ArrayList<HyperAccount> accounts =  em.getAccounts();
+		HashMap<HyperAccount, String> relevantValues = new HashMap<HyperAccount, String>();
+		for (HyperAccount account:accounts) {
+			if (allValues.containsKey(account)) {
+				ArrayList<Double> historicValues = allValues.get(account);
+				if (historicValues.size() >= timevalue) {
+					double historicValue = historicValues.get(timevalue - 1);
+					double currentvalue = 0.0;
+					currentvalue = account.getBalance();
+					if (historicValue == 0.0) {
+						relevantValues.put(account, "?");
+						continue;
+					}
+					double percentChange = ((currentvalue - historicValue) / historicValue) * 100.0;
+					percentChange = CommonFunctions.round(percentChange, 3);
+					String stringValue = percentChange + "";
+					relevantValues.put(account, stringValue);
+				} else {
+					relevantValues.put(account, "?");
+				}
+			} else {
+				relevantValues.put(account, "?");
+			}
+		}
+		return relevantValues;
+	}
+
+	public synchronized HashMap<HyperAccount, Double> getAccountPercentChange(String economy, int timevalue) {
+		if (sr == null) return null;
+		HashMap<HyperAccount, ArrayList<Double>> allValues = new HashMap<HyperAccount, ArrayList<Double>>();
+		QueryResult result = sr.select("SELECT ACCOUNT, BALANCE FROM hyperconomy_history_accounts ORDER BY TIME DESC");
+		while (result.next()) {
+			HyperAccount account = em.getAccount(result.getString("ACCOUNT"));
+			double balance = result.getDouble("BALANCE");
+			if (!allValues.containsKey(account)) {
+				ArrayList<Double> values = new ArrayList<Double>();
+				values.add(balance);
+				allValues.put(account, values);
+			} else {
+				ArrayList<Double> values = allValues.get(account);
+				values.add(balance);
+				allValues.put(account, values);
+			}
+		}
+		result.close();
+		
+		ArrayList<HyperAccount> accounts =  em.getAccounts();
+		HashMap<HyperAccount, Double> relevantValues = new HashMap<HyperAccount, Double>();
+		for (HyperAccount account:accounts) {
+			if (allValues.containsKey(account)) {
+				ArrayList<Double> historicValues = allValues.get(account);
+				if (historicValues.size() >= timevalue) {
+					double historicValue = historicValues.get(timevalue - 1);
+					double currentvalue = 0.0;
+					currentvalue = account.getBalance();
+					if (historicValue == 0.0) {
+						relevantValues.put(account, 0.0);
+						continue;
+					}
+					double percentChange = ((currentvalue - historicValue) / historicValue) * 100.0;
+					percentChange = CommonFunctions.round(percentChange, 3);
+					relevantValues.put(account, percentChange);
+				} else {
+					relevantValues.put(account, 0.0);
+				}
+			} else {
+				relevantValues.put(account, 0.0);
 			}
 		}
 		return relevantValues;

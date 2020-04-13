@@ -410,7 +410,7 @@ class OldInfoSign {
 			this.increment = inc;
 			new Thread(new Runnable() {
 				public void run() {
-					String percentchange = hc.getHistory().getPercentChange(to, timeValueHours);
+					String percentchange = hc.getHistory().getObjectPercentChange(to, timeValueHours);
 					String colorcode = getcolorCode(percentchange);
 					line3 = "&f" + "History:";
 					line4 = "&f" + "" + timeValue + increment.toLowerCase() + colorcode + "(" + percentchange + ")";

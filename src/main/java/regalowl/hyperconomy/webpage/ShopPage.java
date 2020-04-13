@@ -99,19 +99,19 @@ public class ShopPage extends HttpServlet implements HyperEventListener {
 
 			if (useHistory) {
 				if (initialLoad) {
-					hour = hist.getPercentChangeAsString(economy, 1);
-					sixHours = hist.getPercentChangeAsString(economy, 6);
-					day = hist.getPercentChangeAsString(economy, 24);
-					threeDay = hist.getPercentChangeAsString(economy, 72);
-					week = hist.getPercentChangeAsString(economy, 168);
+					hour = hist.getObjectPercentChangeAsString(economy, 1);
+					sixHours = hist.getObjectPercentChangeAsString(economy, 6);
+					day = hist.getObjectPercentChangeAsString(economy, 24);
+					threeDay = hist.getObjectPercentChangeAsString(economy, 72);
+					week = hist.getObjectPercentChangeAsString(economy, 168);
 					initialLoad = false;
 				} else {
 					for (TradeObject to:modifiedSinceLastUpdate) {
-						hour.put(to, hist.getPercentChange(to, 1));
-						sixHours.put(to, hist.getPercentChange(to, 6));
-						day.put(to, hist.getPercentChange(to, 24));
-						threeDay.put(to, hist.getPercentChange(to, 72));
-						week.put(to, hist.getPercentChange(to, 168));
+						hour.put(to, hist.getObjectPercentChange(to, 1));
+						sixHours.put(to, hist.getObjectPercentChange(to, 6));
+						day.put(to, hist.getObjectPercentChange(to, 24));
+						threeDay.put(to, hist.getObjectPercentChange(to, 72));
+						week.put(to, hist.getObjectPercentChange(to, 168));
 					}
 					modifiedSinceLastUpdate.clear();
 				}

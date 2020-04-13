@@ -220,7 +220,7 @@ public class TradeObjectInfoSign extends InfoSign {
 		try {
 			new Thread(new Runnable() {
 				public void run() {
-					String percentchange = hc.getHistory().getPercentChange(to, timeValueHours);
+					String percentchange = hc.getHistory().getObjectPercentChange(to, timeValueHours);
                     lines[2] = "&f" + "Change:";
                     if(percentchange.equalsIgnoreCase("?")) {
                         lines[3] = "&f" + "" + timeValue + timeIncrement.toLowerCase() + "&1(" + percentchange + "%)";
