@@ -1,7 +1,7 @@
 package regalowl.hyperconomy.display;
 
 public enum SignObject {
-	TRADEOBJECT, ACCOUNT, TRADEOBJECTLIST, ACCOUNTLIST, TAX, NONE;
+	TRADEOBJECT, ACCOUNT, TRADEOBJECTLIST, ACCOUNTLIST, TAXRATE, NONE;
 
 	public static SignObject fromString(String type) {
 		if (type == null) {
@@ -10,16 +10,16 @@ public enum SignObject {
 		type = type.toUpperCase();
 		if (type == null) {
 			return null;
-		} else if ("BUY,SELL,STOCK,TOTALSTOCK,VALUE,STATUS,STATICPRICE,STARTPRICE,MEDIAN,CHANGE,PRODUCTTAX,SB".contains(type)) {
+		} else if (type.matches("BUY|SELL|STOCK|TOTALSTOCK|VALUE|STATUS|STATICPRICE|STARTPRICE|MEDIAN|OBJCHANGE|PRODUCTTAX|SB")) {
 			return SignObject.TRADEOBJECT;
-		} else if ("BALANCE".contains(type)) {
+		} else if (type.matches("BALANCE|ACTCHANGE")) {
 			return SignObject.ACCOUNT;
-		} else if ("TOPSTOCK,TOPTOTALSTOCK,TOPVALUE,TOPBUY,TOPSELL,TOPPRODUCTTAX,TOPMEDIAN,TOPSTATICPRICE,TOPSTARTPRICE,TOPCHANGE".contains(type)) {
+		} else if (type.matches("TOPSTOCK|TOPTOTALSTOCK|TOPVALUE|TOPBUY|TOPSELL|TOPPRODUCTTAX|TOPMEDIAN|TOPSTATICPRICE|TOPSTARTPRICE|TOPOBJCHANGE")) {
 			return SignObject.TRADEOBJECTLIST;
-		} else if ("TOPBALANCE".contains(type)) {
+		} else if (type.matches("TOPBALANCE|TOPACTCHANGE")) {
 			return SignObject.ACCOUNTLIST;
-		} else if ("TAX".contains(type)) {
-			return SignObject.TAX;
+		} else if (type.matches("TAXRATE")) {
+			return SignObject.TAXRATE;
 		} else {
 			return SignObject.NONE;
 		}

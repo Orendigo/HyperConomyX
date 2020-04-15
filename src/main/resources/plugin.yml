@@ -250,6 +250,14 @@ commands:
       permission: hyperconomy.chestshop
       permission-message: You do not have permission.
       aliases: [hccs]
+   incometax:
+      description: Takes income tax.
+      permission: hyperconomy.admin
+      permission-message: You do not have permission.
+   topchanges:
+      description: Lists top items with the highest price changes.
+      permission: hyperconomy.top
+      permission-message: You do not have permission.
 permissions:
     hyperconomy.*:
         description: Gives access to all HyperConomy commands.
@@ -287,6 +295,7 @@ permissions:
             hyperconomy.buysign: true
             hyperconomy.sellsign: true
             hyperconomy.pay: true
+            hyperconomy.usesign: true
     hyperconomy.econ:
         description: Allows use of all basic economy commands.
         default: op
@@ -313,7 +322,7 @@ permissions:
         description: Allows use of item information lookups.
         default: false
     hyperconomy.top:
-        description: Allows use of the topitems and topenchants commands.
+        description: Allows use of the topitems, topenchants and topchanges commands.
         default: false
     hyperconomy.settings:
         description: Allows checking the settings.

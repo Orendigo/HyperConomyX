@@ -99,6 +99,14 @@ public class HyperShopManager implements HyperEventListener {
 		return null;
 	}
 
+	public Shop getShop(HLocation hloc) {
+		if (hloc == null) return null;
+		for (Shop shop : shops.values()) {
+			if (shop.inShop(hloc)) return shop;
+		}
+		return null;
+	}
+
 	public Shop getShop(String shop) {
 		shop = fixShopName(shop);
 		if (shops.containsKey(shop)) {

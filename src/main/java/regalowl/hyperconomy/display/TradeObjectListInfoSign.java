@@ -1,6 +1,7 @@
 package regalowl.hyperconomy.display;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -12,6 +13,8 @@ import java.util.Map;
 import regalowl.hyperconomy.HyperConomy;
 import regalowl.hyperconomy.minecraft.HLocation;
 import regalowl.hyperconomy.minecraft.HSign;
+import regalowl.hyperconomy.shop.PlayerShop;
+import regalowl.hyperconomy.shop.Shop;
 import regalowl.hyperconomy.tradeobject.BasicTradeObject;
 import regalowl.hyperconomy.tradeobject.EnchantmentClass;
 import regalowl.hyperconomy.tradeobject.TradeObject;
@@ -72,10 +75,10 @@ public class TradeObjectListInfoSign extends InfoSign implements InteractiveInfo
             filter = "ALL";
         }
         parameters[1] = filter;
-        if(type.equals("TOPCHANGE")) {
+        if(type.equals("TOPOBJCHANGE")) {
             try {
                 timeIncrement = parameters[2].substring(parameters[2].length()-1).toLowerCase();
-                timeValue = Integer.parseInt(parameters[1].substring(0,parameters[2].length()-1));
+                timeValue = Integer.parseInt(parameters[2].substring(0,parameters[2].length()-1));
                 timeValueHours = timeValue;
                 if (timeIncrement.equals("h")) {
                     timeValueHours *= 1;
@@ -98,7 +101,7 @@ public class TradeObjectListInfoSign extends InfoSign implements InteractiveInfo
                 timeValueHours = 24;
             }
             parameters[2] = timeValue+timeIncrement.toLowerCase();
-        } else if("TOPBUY,TOPSELL".contains(type.toUpperCase())) {
+        } else if(type.toUpperCase().matches("TOPBUY|TOPSELL|TOPPRODUCTTAX")) {
             if(filter.equals("ENCHANTS")) {
                 enchantClass = EnchantmentClass.fromString(parameters[2]);
                 if(enchantClass == EnchantmentClass.NONE) {
@@ -130,7 +133,7 @@ public class TradeObjectListInfoSign extends InfoSign implements InteractiveInfo
     }
 
 	public void update() {
-        if(type.equals("TOPCHANGE")) {
+        if(type.equals("TOPOBJCHANGE")) {
             HashMap<TradeObject, Double> allObjects = hc.getHistory().getObjectPercentChange(economy, timeValueHours);
             historyDisplayObjects.clear();
             if(!filter.equals("ALL")) {
@@ -149,11 +152,10 @@ public class TradeObjectListInfoSign extends InfoSign implements InteractiveInfo
                 historyDisplayObjects = allObjects;
             }
             historyDisplayObjects = sortByValue(historyDisplayObjects);
-            if(index >= historyDisplayObjects.size())
-                index = historyDisplayObjects.size()-1; 
         } else {
-            ArrayList<TradeObject> allObjects = hc.getDataManager().getEconomy(economy).getTradeObjects();
-            displayObjects.clear();	
+            Shop s = hc.getDataManager().getHyperShopManager().getShop(loc);
+            ArrayList<TradeObject> allObjects = hc.getDataManager().getEconomy(economy).getTradeObjects(s);
+            displayObjects.clear();
             if(!filter.equals("ALL")) {
                 for(TradeObject to : allObjects) {
                     if(categoryFilter) {
@@ -180,13 +182,17 @@ public class TradeObjectListInfoSign extends InfoSign implements InteractiveInfo
             if(index >= displayObjects.size())
                 index = displayObjects.size()-1; 
         }
+        if(index >= historyDisplayObjects.size())
+            index = historyDisplayObjects.size()-1;
+        if(index < 0)
+            index = 0;
         updateDisplay();
     }
 
     public void updateDisplay() {
         lines[0] = "&a#"+(index+1)+" &f"+getTitle()+":";
         String name;
-        if(type.equals("TOPCHANGE")) {
+        if(type.equals("TOPOBJCHANGE")) {
             if(historyDisplayObjects.isEmpty()) {
                 lines[1] = " ";
                 lines[2] = " ";
@@ -247,7 +253,7 @@ public class TradeObjectListInfoSign extends InfoSign implements InteractiveInfo
     public void incrementIndex(int amount) {
         if(scrollable) {
             for(int i = 0; i < amount; i++) {
-                if(type.equals("TOPCHANGE")) {
+                if(type.equals("TOPOBJCHANGE")) {
                     if(index+1 == historyDisplayObjects.size())
                         index = 0;
                     else
@@ -266,7 +272,7 @@ public class TradeObjectListInfoSign extends InfoSign implements InteractiveInfo
     public void decrementIndex(int amount) {
         if(scrollable) {
             for(int i = 0; i < amount; i++) {
-                if(type.equals("TOPCHANGE")) {
+                if(type.equals("TOPOBJCHANGE")) {
                     if(index-1 < 0)
                         index = historyDisplayObjects.size()-1;
                     else
@@ -302,7 +308,7 @@ public class TradeObjectListInfoSign extends InfoSign implements InteractiveInfo
                 return "Static Price";
             case "TOPSTARTPRICE":
                 return "Start Price";
-            case "TOPCHANGE":
+            case "TOPOBJCHANGE":
                 return "Change";
             default:
                 return "";

@@ -80,6 +80,8 @@ public class InfoSignHandler implements HyperEventListener {
 	public void handleHyperEvent(HyperEvent event) {
 		if (event instanceof HBlockBreakEvent) {
 			HBlockBreakEvent hevent = (HBlockBreakEvent)event;
+			if(!hevent.getPlayer().hasPermission("hyperconomy.createsign"))
+				hevent.cancel();
 			HLocation l = hevent.getBlock().getLocation();
 			InfoSign is = getInfoSign(l);
 			if (is == null) {return;}
@@ -115,6 +117,7 @@ public class InfoSignHandler implements HyperEventListener {
 			try {
 				HyperPlayer hp = hevent.getHyperPlayer();
 				if (hc.getHyperLock().loadLock()) return;
+				if (!hp.hasPermission("hyperconomy.usesign")) return;
 				HLocation target = hp.getTargetLocation();
 				InteractiveInfoSign iis = null;
 				if(isInfoSign(target)) {
@@ -189,6 +192,8 @@ public class InfoSignHandler implements HyperEventListener {
 				return new AccountInfoSign(hc, loc, economy, type, parameters);
 			case TRADEOBJECTLIST:
 				return new TradeObjectListInfoSign(hc, loc, economy, type, parameters);
+			case ACCOUNTLIST:
+				return new AccountListInfoSign(hc, loc, economy, type, parameters);
 			default:
 				return null;
 		}
