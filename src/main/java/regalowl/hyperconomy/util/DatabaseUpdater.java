@@ -102,7 +102,7 @@ public class DatabaseUpdater {
 						sw.addToQueue("UPDATE hyperconomy_objects SET DATA = '"+n.serialize()+"' WHERE NAME = '"+name+"'");
 					} else if (type.equalsIgnoreCase("ENCHANTMENT")) {
 						SerializableEnchantment sis = new SerializableEnchantment(data);
-						HEnchantment n = new HEnchantment(sis.getEnchantmentName(), sis.getLvl());
+						HEnchantment n = new HEnchantment(sis.getEnchantmentNamespace(), sis.getEnchantmentKey(), sis.getLvl());
 						sw.addToQueue("UPDATE hyperconomy_objects SET DATA = '"+n.serialize()+"' WHERE NAME = '"+name+"'");
 					}
 				}

@@ -67,7 +67,7 @@ public class SerializableItemMeta extends SerializableObject implements Serializ
 		String enchantString = "";
 		if (enchantments != null && enchantments.size() > 0) {
 			for(SerializableEnchantment se:enchantments) {
-				enchantString += se.getEnchantmentName() + ",";
+				enchantString += se.getEnchantmentKey() + ",";
 			}
 			enchantString = enchantString.substring(0, enchantString.length() - 1);
 		}

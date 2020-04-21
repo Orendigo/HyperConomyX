@@ -320,8 +320,8 @@ public class BukkitConnector extends JavaPlugin implements MineCraftConnector, L
 	
 	@Override
 	public boolean conflictsWith(HEnchantment e1, HEnchantment e2) {
-		Enchantment ench1 = Enchantment.getByKey(NamespacedKey.minecraft(e1.getEnchantmentKey()));
-		Enchantment ench2 = Enchantment.getByKey(NamespacedKey.minecraft(e2.getEnchantmentKey()));
+		Enchantment ench1 = Enchantment.getByKey(NamespacedKey.minecraft(e1.getEnchantment()));
+		Enchantment ench2 = Enchantment.getByKey(NamespacedKey.minecraft(e2.getEnchantment()));
 		return ench1.conflictsWith(ench2);
 	}
 	

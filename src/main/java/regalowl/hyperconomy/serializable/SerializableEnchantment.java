@@ -4,19 +4,20 @@ import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 
- 
-@SuppressWarnings("deprecation")
 public class SerializableEnchantment extends SerializableObject implements Serializable {
 	private static final long serialVersionUID = 4510326523024526205L;
-	private String enchantment;
+	private String namespace;
+	private String key;
     private int lvl;
  
 	public SerializableEnchantment(Enchantment e, int lvl) {
-        this.enchantment = e.getName();
+		this.namespace = e.getKey().getNamespace();
+		this.key = e.getKey().getKey();
         this.lvl = lvl;
     }
 
@@ -28,19 +29,24 @@ public class SerializableEnchantment extends SerializableObject implements Seria
 			ois.close();
 			if (!(o instanceof SerializableEnchantment)) {return;}
 			SerializableEnchantment se = (SerializableEnchantment)o;
-	        this.enchantment = se.getEnchantmentName();
-	        this.lvl = se.getLvl();
+			this.namespace = se.namespace;
+			this.key = se.key;
+	        this.lvl = se.lvl;
     	} catch (Exception e) {
     		
     	}
     }
 
 	public Enchantment getEnchantment() {
-		return Enchantment.getByName(enchantment);
+		return Enchantment.getByKey(NamespacedKey.minecraft(key));
     }
 
-	public String getEnchantmentName() {
-		return enchantment;
+	public String getEnchantmentNamespace() {
+		return namespace;
+	}
+
+	public String getEnchantmentKey() {
+		return key;
 	}
 
 	public int getLvl() {
@@ -51,7 +57,8 @@ public class SerializableEnchantment extends SerializableObject implements Seria
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((enchantment == null) ? 0 : enchantment.hashCode());
+		result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
+		result = prime * result + ((key == null) ? 0 : key.hashCode());
 		result = prime * result + lvl;
 		return result;
 	}
@@ -65,10 +72,15 @@ public class SerializableEnchantment extends SerializableObject implements Seria
 		if (getClass() != obj.getClass())
 			return false;
 		SerializableEnchantment other = (SerializableEnchantment) obj;
-		if (enchantment == null) {
-			if (other.enchantment != null)
+		if (namespace == null) {
+			if (other.namespace != null)
 				return false;
-		} else if (!enchantment.equals(other.enchantment))
+		} else if (!namespace.equals(other.namespace))
+			return false;
+		if (key == null) {
+			if (other.key != null)
+				return false;
+		} else if (!key.equals(other.key))
 			return false;
 		if (lvl != other.lvl)
 			return false;

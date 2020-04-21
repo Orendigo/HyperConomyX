@@ -406,7 +406,7 @@ public class BukkitCommon {
     		while (it.hasNext()) {
     			Enchantment e = it.next();
     			int lvl = enchants.get(e);
-    			enchantments.add(new HEnchantment(e.getKey().getKey(), lvl));
+    			enchantments.add(new HEnchantment(e.getKey().getNamespace(),e.getKey().getKey(), lvl));
     		}
             ArrayList<HItemFlag> itemFlags = new ArrayList<HItemFlag>();
             Set<ItemFlag> flags = im.getItemFlags();
@@ -430,7 +430,7 @@ public class BukkitCommon {
     			while (iter.hasNext()) {
     				Enchantment e = iter.next();
     				int lvl = stored.get(e);
-					storedEnchantments.add(new HEnchantment(e.getKey().getKey(), lvl));
+					storedEnchantments.add(new HEnchantment(e.getKey().getNamespace(),e.getKey().getKey(), lvl));
     			}
         		itemMeta = new HEnchantmentStorageMeta(displayName, lore, itemFlags, unbreakable, repairCost, storedEnchantments);
         	} else if (im instanceof BookMeta) {
@@ -529,7 +529,7 @@ public class BukkitCommon {
         		HEnchantmentStorageMeta sItemMeta = (HEnchantmentStorageMeta)hItemMeta;
         		EnchantmentStorageMeta esm = (EnchantmentStorageMeta)itemMeta;
         		for (HEnchantment se:sItemMeta.getEnchantments()) {
-        			esm.addStoredEnchant(Enchantment.getByKey(NamespacedKey.minecraft(se.getEnchantmentKey())), se.getLvl(), true);
+        			esm.addStoredEnchant(Enchantment.getByKey(NamespacedKey.minecraft(se.getEnchantment())), se.getLvl(), true);
         		}
         	} else if (hItemMeta instanceof HBookMeta) {
         		HBookMeta sItemMeta = (HBookMeta)hItemMeta;

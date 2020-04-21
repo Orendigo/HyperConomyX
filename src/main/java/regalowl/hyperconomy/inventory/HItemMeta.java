@@ -101,7 +101,7 @@ public class HItemMeta {
 		String enchantString = "";
 		if (enchantments != null && enchantments.size() > 0) {
 			for(HEnchantment se:enchantments) {
-				enchantString += se.getEnchantmentKey() + ",";
+				enchantString += se.getEnchantment() + ",";
 			}
 			enchantString = enchantString.substring(0, enchantString.length() - 1);
 		}
