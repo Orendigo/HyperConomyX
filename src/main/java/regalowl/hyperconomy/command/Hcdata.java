@@ -381,12 +381,6 @@ public class Hcdata extends BaseCommand implements HyperCommand {
 				data.addResponse(L.get("HCDATA_ROUNDVALUES_INVALID"));
 				hc.gSDL().getErrorWriter().writeError(e);
 			}
-		} else if (args[0].equalsIgnoreCase("purgeaccounts")) {
-			try {
-				data.addResponse(L.f(L.get("HCDATA_ACCOUNTS_PURGED"), hc.getHyperPlayerManager().purgeDeadAccounts()));
-			} catch (Exception e) {
-				hc.gSDL().getErrorWriter().writeError(e);
-			}
 		} else {
 			data.addResponse(L.get("HCDATA_INVALID"));
 		}

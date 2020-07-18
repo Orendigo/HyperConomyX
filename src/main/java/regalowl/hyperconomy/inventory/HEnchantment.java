@@ -8,44 +8,35 @@ import regalowl.simpledatalib.CommonFunctions;
  
 
 public class HEnchantment {
-	private String namespace;
-	private String key;
+	private String enchantment;
     private int lvl;
  
-	public HEnchantment(String namespace, String key, int lvl) {
-		this.namespace = namespace;
-		this.key = key;
+	public HEnchantment(String enchantment, int lvl) {
+		this.enchantment = enchantment;
         this.lvl = lvl;
     }
 	
 	public HEnchantment(HEnchantment he) {
-        this.namespace = he.namespace;
-		this.key = he.key;
+        this.enchantment = he.enchantment;
         this.lvl = he.lvl;
     }
 	
 	public String serialize() {
 		HashMap<String,String> data = new HashMap<String,String>();
-		data.put("namespace", namespace);
-		data.put("key", key);
+		data.put("enchantment", enchantment);
 		data.put("lvl", lvl+"");
 		return CommonFunctions.implodeMap(data);
 	}
 	
 	public HEnchantment(String serialized) {
 		HashMap<String,String> data = CommonFunctions.explodeMap(serialized);
-		this.namespace = data.get("namespace");
-		this.key = data.get("key");
+		this.enchantment = data.get("enchantment");
 		this.lvl = Integer.parseInt(data.get("lvl"));
     }
 
 
 	public String getEnchantment() {
-		return key;
-	}
-
-	public String getNamespace() {
-		return namespace;
+		return enchantment;
 	}
 
 	public int getLvl() {
@@ -56,8 +47,7 @@ public class HEnchantment {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
-		result = prime * result + ((key == null) ? 0 : key.hashCode());
+		result = prime * result + ((enchantment == null) ? 0 : enchantment.hashCode());
 		result = prime * result + lvl;
 		return result;
 	}
@@ -71,15 +61,10 @@ public class HEnchantment {
 		if (getClass() != obj.getClass())
 			return false;
 		HEnchantment other = (HEnchantment) obj;
-		if (namespace == null) {
-			if (other.namespace != null)
+		if (enchantment == null) {
+			if (other.enchantment != null)
 				return false;
-		} else if (!namespace.equals(other.key))
-			return false;
-		if (key == null) {
-			if (other.key != null)
-			return false;
-		} else if (!key.equals(other.key))
+		} else if (!enchantment.equals(other.enchantment))
 			return false;
 		if (lvl != other.lvl)
 			return false;

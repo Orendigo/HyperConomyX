@@ -152,7 +152,6 @@ public class DataManager implements HyperEventListener {
 	
 	public void runDatabaseMaintenance() {
 		hc.getSQLWrite().addToQueue("DELETE FROM hyperconomy_object_data WHERE ID NOT IN (SELECT DATA_ID FROM hyperconomy_objects) AND ID NOT IN (SELECT DATA_ID FROM hyperconomy_chest_shop_items)");
-		hpm.purgeDeadAccounts();
 	}
 	
 	private void loadEconomies() {

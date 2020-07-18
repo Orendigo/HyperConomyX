@@ -231,16 +231,17 @@ public class HyperPlayerManager implements HyperEventListener {
 		}
 	}
 	
-	public int purgeDeadAccounts() {
-		int purgeCount = 0;
-		for (HyperPlayer hp:getHyperPlayers()) {
-			if (hp.safeToDelete()) {
-				hp.delete();
-				purgeCount++;
-			}
-		}
-		return purgeCount;
-	}
+	// public int purgeDeadAccounts() {
+	// 	int purgeCount = 0;
+	// 	for (HyperPlayer hp:getHyperPlayers()) {
+	// 		if (hp.safeToDelete()) {
+	// 			hp.delete();
+	// 			purgeCount++;
+	// 		}
+	// 	}
+	// 	hc.getMC().logInfo(purgeCount + "");
+	// 	return purgeCount;
+	// }
 	
 	
 }
