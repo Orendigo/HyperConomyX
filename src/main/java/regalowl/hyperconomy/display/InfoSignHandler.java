@@ -194,6 +194,8 @@ public class InfoSignHandler implements HyperEventListener {
 				return new TradeObjectListInfoSign(hc, loc, economy, type, parameters);
 			case ACCOUNTLIST:
 				return new AccountListInfoSign(hc, loc, economy, type, parameters);
+			case TAXRATE:
+				return new TaxInfoSign(hc, loc, economy, type, parameters);
 			default:
 				return null;
 		}

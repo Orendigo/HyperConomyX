@@ -3,6 +3,7 @@ package regalowl.hyperconomy.inventory;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import regalowl.hyperconomy.account.HyperPlayer;
 import regalowl.simpledatalib.CommonFunctions;
 
 public class HCrossbowMeta extends HItemMeta {
@@ -26,6 +27,31 @@ public class HCrossbowMeta extends HItemMeta {
     public HCrossbowMeta(HCrossbowMeta meta) {
         super(meta);
         chargedProjectiles = meta.chargedProjectiles;
+    }
+
+    @Override
+    public String serialize() {
+        HashMap<String,String> data = super.getMap();
+        ArrayList<String> cps = new ArrayList<String>();
+		for(HItemStack is:chargedProjectiles) {
+            cps.add(is.serialize());
+        }
+		return CommonFunctions.implodeMap(data); 
+    }
+
+    @Override
+    public ArrayList<String> displayInfo(HyperPlayer p, String color1, String color2) {
+        ArrayList<String> info = super.displayInfo(p, color1, color2);
+		String chargedProjectilesString = "";
+		if (p != null && chargedProjectiles.size() > 0) {
+			for(HItemStack pe:chargedProjectiles) {
+				chargedProjectilesString += "Material:"+pe.getMaterial();
+			}
+			chargedProjectilesString = chargedProjectilesString.substring(0, chargedProjectilesString.length() - 1);
+		}
+		info.add(color1 + "Charged Projectiles: " + color2 + chargedProjectilesString);
+		return info;
+
     }
 
     @Override

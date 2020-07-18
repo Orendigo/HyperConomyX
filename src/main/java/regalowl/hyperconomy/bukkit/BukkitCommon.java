@@ -1,6 +1,7 @@
 package regalowl.hyperconomy.bukkit;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -31,20 +32,25 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.CrossbowMeta;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkEffectMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.KnowledgeBookMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.Repairable;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.inventory.meta.SuspiciousStewMeta;
+import org.bukkit.inventory.meta.TropicalFishBucketMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
+import org.eclipse.jetty.server.Authentication.SendSuccess;
 
 import regalowl.hyperconomy.HyperConomy;
 import regalowl.hyperconomy.account.HyperPlayer;
@@ -52,6 +58,7 @@ import regalowl.hyperconomy.display.SignObject;
 import regalowl.hyperconomy.inventory.HBannerMeta;
 import regalowl.hyperconomy.inventory.HBookMeta;
 import regalowl.hyperconomy.inventory.HColor;
+import regalowl.hyperconomy.inventory.HCrossbowMeta;
 import regalowl.hyperconomy.inventory.HEnchantment;
 import regalowl.hyperconomy.inventory.HEnchantmentStorageMeta;
 import regalowl.hyperconomy.inventory.HFireworkEffect;
@@ -62,6 +69,7 @@ import regalowl.hyperconomy.inventory.HInventoryType;
 import regalowl.hyperconomy.inventory.HItemFlag;
 import regalowl.hyperconomy.inventory.HItemMeta;
 import regalowl.hyperconomy.inventory.HItemStack;
+import regalowl.hyperconomy.inventory.HKnowledgeBookMeta;
 import regalowl.hyperconomy.inventory.HLeatherArmorMeta;
 import regalowl.hyperconomy.inventory.HMapMeta;
 import regalowl.hyperconomy.inventory.HPattern;
@@ -69,6 +77,8 @@ import regalowl.hyperconomy.inventory.HPotionData;
 import regalowl.hyperconomy.inventory.HPotionEffect;
 import regalowl.hyperconomy.inventory.HPotionMeta;
 import regalowl.hyperconomy.inventory.HSkullMeta;
+import regalowl.hyperconomy.inventory.HSuspiciousStewMeta;
+import regalowl.hyperconomy.inventory.HTropicalFishBucketMeta;
 import regalowl.hyperconomy.minecraft.HBlock;
 import regalowl.hyperconomy.minecraft.HItem;
 import regalowl.hyperconomy.minecraft.HLocation;
@@ -498,7 +508,28 @@ public class BukkitCommon {
         		for (Pattern p:sItemMeta.getPatterns()) {
         			patterns.add(new HPattern(p.getColor().toString(), p.getPattern().toString()));
         		}
-        		itemMeta = new HBannerMeta(displayName, lore, enchantments, itemFlags, unbreakable, repairCost, patterns);
+				itemMeta = new HBannerMeta(displayName, lore, enchantments, itemFlags, unbreakable, repairCost, patterns);
+			} else if (im instanceof CrossbowMeta) {
+				CrossbowMeta sCrossbowMeta = (CrossbowMeta)im;
+				ArrayList<HItemStack> chargedProjectiles = new ArrayList<HItemStack>();
+				for(ItemStack is:sCrossbowMeta.getChargedProjectiles()) {
+					chargedProjectiles.add(getSerializableItemStack(is));
+				}
+				itemMeta = new HCrossbowMeta(displayName, lore, enchantments, itemFlags, unbreakable, repairCost, chargedProjectiles);
+			} else if (im instanceof SuspiciousStewMeta) {
+				SuspiciousStewMeta sSuspiciousStewMeta = (SuspiciousStewMeta)im;
+				ArrayList<HPotionEffect> potionEffects = new ArrayList<HPotionEffect>();
+				for(PotionEffect pe:sSuspiciousStewMeta.getCustomEffects()) {
+					potionEffects.add(new HPotionEffect(pe.getType().getName(), pe.getAmplifier(), pe.getDuration(), pe.isAmbient()));
+				}
+				itemMeta = new HSuspiciousStewMeta(displayName, lore, enchantments, itemFlags, unbreakable, repairCost, potionEffects);
+			} else if (im instanceof TropicalFishBucketMeta) {
+				TropicalFishBucketMeta sTropicalFishBucketMeta = (TropicalFishBucketMeta)im;
+				Color bodyColor = sTropicalFishBucketMeta.getBodyColor().getColor();
+				HColor hBodyColor = new HColor(bodyColor.getRed(), bodyColor.getGreen(), bodyColor.getBlue());
+				Color patternColor = sTropicalFishBucketMeta.getBodyColor().getColor();
+				HColor hPatternColor = new HColor(patternColor.getRed(), patternColor.getGreen(), patternColor.getBlue());
+				itemMeta = new HTropicalFishBucketMeta(displayName, lore, enchantments, itemFlags, unbreakable, repairCost, hBodyColor, sTropicalFishBucketMeta.getPattern().name(), hPatternColor);
 			} else {
         		itemMeta = new HItemMeta(displayName, lore, enchantments, itemFlags, unbreakable, repairCost);
         	}
@@ -598,8 +629,29 @@ public class BukkitCommon {
         		BannerMeta bm = (BannerMeta)itemMeta;
         		for (HPattern hp:sItemMeta.getPatterns()) {
         			bm.addPattern(new Pattern(DyeColor.valueOf(hp.getDyeColor()), PatternType.valueOf(hp.getPatternType())));
-        		}
-        	}
+				}
+			} else if (hItemMeta instanceof CrossbowMeta) {
+				HCrossbowMeta sCrossbowMeta = (HCrossbowMeta)hItemMeta;
+				CrossbowMeta cm = (CrossbowMeta)itemMeta;
+				for(HItemStack is:sCrossbowMeta.getChargedProjectiles()) {
+					cm.addChargedProjectile(getItemStack(is));
+				}
+			} else if (hItemMeta instanceof SuspiciousStewMeta) {
+				HSuspiciousStewMeta sSuspiciousStewMeta = (HSuspiciousStewMeta)hItemMeta;
+				SuspiciousStewMeta ssm = (SuspiciousStewMeta)itemMeta;
+				for(HPotionEffect spe:sSuspiciousStewMeta.getPotionEffects()) {
+					PotionEffect pe = new PotionEffect(PotionEffectType.getByName(spe.getType()), spe.getDuration(), spe.getAmplifier(), spe.isAmbient());
+					ssm.addCustomEffect(pe, true);
+				}
+			} else if (hItemMeta instanceof TropicalFishBucketMeta) {
+				HTropicalFishBucketMeta sTropicalFishBucketMeta = (HTropicalFishBucketMeta)hItemMeta;
+				TropicalFishBucketMeta tfbm = (TropicalFishBucketMeta)itemMeta;
+				HColor bodyColor = sTropicalFishBucketMeta.getBodyColor();
+				HColor patternColor = sTropicalFishBucketMeta.getPatternColor();
+				tfbm.setBodyColor(DyeColor.getByColor(Color.fromRGB(bodyColor.getRed(), bodyColor.getGreen(), bodyColor.getBlue())));
+				tfbm.setPattern(org.bukkit.entity.TropicalFish.Pattern.valueOf(sTropicalFishBucketMeta.getPattern()));
+				tfbm.setPatternColor(DyeColor.getByColor(Color.fromRGB(patternColor.getRed(), patternColor.getGreen(), patternColor.getBlue())));
+			}
     		generatedItemStack.setItemMeta(itemMeta);
         }
         return generatedItemStack;

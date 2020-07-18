@@ -3,8 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>regalowl.hyperconomy</groupId>
 	<artifactId>hyperconomy</artifactId>
-	<version>0.975.8-SNAPSHOT</version>
-	<name>HyperConomy</name>
+	<version>0.10.0-SNAPSHOT</version>
+	<name>HyperConomyX</name>
 	<description>HyperConomy creates a global market that can be accessed via designated shops. Prices follow a hyperbolic curve, and vary based on the stock of the item or enchantment. Everything in the market can be customized, from the items themselves to the names of the shops. HyperConomy supports every item in Minecraft, even the normally impossible to obtain ones. It allows a great deal of control over the economy, allowing you to edit any setting without a server restart.</description>
 	<repositories>
 		<repository>
@@ -29,7 +29,7 @@
 		<dependency>
           	<groupId>org.spigotmc</groupId>
          	<artifactId>spigot-api</artifactId>
-         	<version>1.15.2-R0.1-SNAPSHOT</version>
+         	<version>1.16.1-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -171,4 +171,3 @@
 	</properties>
 	<url>http://dev.bukkit.org/server-mods/hyperconomy/</url>
 </project>
-

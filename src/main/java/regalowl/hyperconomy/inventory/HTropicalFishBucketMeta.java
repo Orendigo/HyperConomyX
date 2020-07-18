@@ -3,6 +3,10 @@ package regalowl.hyperconomy.inventory;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.bukkit.Color;
+import org.bukkit.DyeColor;
+
+import regalowl.hyperconomy.account.HyperPlayer;
 import regalowl.simpledatalib.CommonFunctions;
 
 public class HTropicalFishBucketMeta extends HItemMeta {
@@ -31,6 +35,24 @@ public class HTropicalFishBucketMeta extends HItemMeta {
         pattern = meta.pattern;
         patternColor = meta.patternColor;
     }
+
+    public String serialize() {
+		HashMap<String,String> data = super.getMap();
+        ArrayList<String> sEffects = new ArrayList<String>();
+        data.put("bodyColor", bodyColor.serialize());
+        data.put("pattern", pattern);
+        data.put("patternColor", patternColor.serialize());
+		return CommonFunctions.implodeMap(data);
+    }
+    
+    @Override
+    public ArrayList<String> displayInfo(HyperPlayer p, String color1, String color2) {
+		ArrayList<String> info = super.displayInfo(p, color1, color2);
+		info.add(color1 + "Body Color: " + color2 + DyeColor.getByColor(Color.fromRGB(bodyColor.getRed(), bodyColor.getGreen(), bodyColor.getBlue())));
+        info.add(color1 + "Pattern: " + color2 + pattern);
+        info.add(color1 + "Pattern Color: " + color2 + DyeColor.getByColor(Color.fromRGB(patternColor.getRed(), patternColor.getGreen(), patternColor.getBlue())));
+		return info;
+	}
 
     @Override
     public HItemMetaType getType() {

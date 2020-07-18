@@ -160,7 +160,7 @@ public class TradeObjectListInfoSign extends InfoSign implements InteractiveInfo
                 for(TradeObject to : allObjects) {
                     if(categoryFilter) {
                         if(to.getCategories().contains(filter.substring(2).toLowerCase()))
-                        displayObjects.add(to);
+                            displayObjects.add(to);
                     } else if(to.getType() == TradeObjectType.ENCHANTMENT && filter.equals("ENCHANTS")) {
                         displayObjects.add(to);
                     } else if(to.getType() == TradeObjectType.ITEM && filter.equals("ITEMS")) {

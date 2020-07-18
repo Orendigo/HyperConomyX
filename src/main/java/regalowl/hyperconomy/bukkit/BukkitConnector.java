@@ -102,7 +102,7 @@ public class BukkitConnector extends JavaPlugin implements MineCraftConnector, L
 	}
 	@Override
 	public void onEnable() {
-		this.getLogger().info("[HyperConomy - Lifesupport] Loading native build HyperConomy");
+		this.getLogger().info("[HyperConomyX] Loading native build HyperConomy");
 		hc.enable();
 		this.getCommand("buy").setTabCompleter(new ObjectTabComplete(hc));
 		this.getCommand("sell").setTabCompleter(new ObjectTabComplete(hc));

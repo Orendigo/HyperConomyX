@@ -41,11 +41,11 @@ public class HEnchantment {
 
 
 	public String getEnchantment() {
-		return namespace;
+		return key;
 	}
 
-	public String getKey() {
-		return key;
+	public String getNamespace() {
+		return namespace;
 	}
 
 	public int getLvl() {
