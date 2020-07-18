@@ -26,10 +26,16 @@ Features
 * Nearly everything can be changed while the server is running.
 * Modular design (can disable unwanted features)
 
+Changes from Hyperconomy
+---------
+* Redesigned info sign format
+* New scrolling info signs
+* Redesigned /hctop
+* More!
 
 Installation
 ---------
-* Download HyperConomyX TBA.
+* Download HyperConomyX from the releases tab.
 * Place the HyperConomy jar file your plugins folder.
 * Restart your server.
 
@@ -37,5 +43,5 @@ Installation
 Help, Bugs, etc.
 ---------
 
-* Check out the wiki TBA.
+* Check out the wiki from the original Hyperconomy [here](https://github.com/RegalOwl/HyperConomy-Documentation). For changed features such as info signs, please check out the wiki on this project.
 * If you experiene a bug, please include Minecraft server type, verison and other plugins installed in your issue report.
