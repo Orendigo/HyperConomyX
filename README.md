@@ -3,6 +3,8 @@ HyperConomyX
 
 HyperConomyX is an updated and refined version of the original HyperConomy plugin by RegalOwl, the all in one economy and shop plugin. HyperConomyX is most known for its dynamic pricing model, but it has a variety of other features including chest shops, player shops, and server shops.
 
+Note: HyperConomyX is still in beta, and several features continue to be broken in 1.16. We are working hard to fix some of these problems.
+
 Features
 ---------
 
@@ -44,4 +46,4 @@ Help, Bugs, etc.
 ---------
 
 * Check out the wiki from the original Hyperconomy [here](https://github.com/RegalOwl/HyperConomy-Documentation). For changed features such as info signs, please check out the wiki on this project.
-* If you experiene a bug, please include Minecraft server type, verison and other plugins installed in your issue report.
+* If you experience a bug, please include Minecraft server type, version and other plugins installed in your issue report.
