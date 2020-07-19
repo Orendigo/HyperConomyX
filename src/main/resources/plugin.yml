@@ -1,6 +1,6 @@
 name: HyperConomy
 main: regalowl.hyperconomy.bukkit.BukkitConnector
-version: 0.10.0
+version: 0.10.1
 author: RegalOwl
 api-version: 1.13
 website: http://dev.bukkit.org/server-mods/hyperconomy/
