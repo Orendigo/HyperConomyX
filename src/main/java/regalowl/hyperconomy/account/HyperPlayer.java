@@ -103,7 +103,7 @@ public class HyperPlayer implements HyperAccount {
 	
 	private void checkExternalAccount() {
 		if (!hc.getMC().useExternalEconomy()) return;
-		if (name == null) return;
+		if (name == null || uuid == null) return;
 		if (!hc.getMC().getEconomyProvider().hasAccount(name)) {
 			hc.getMC().getEconomyProvider().createAccount(name);
 			hc.getMC().getEconomyProvider().depositAccount(name, balance);
